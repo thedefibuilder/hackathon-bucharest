@@ -5,7 +5,6 @@ import React from 'react';
 import { CurrencyDollarIcon, HeartIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { BuidlGuidlLogo } from '~~/components/assets/BuidlGuidlLogo';
 import { Faucet } from '~~/components/scaffold-eth';
-import { SwitchTheme } from '~~/components/SwitchTheme';
 import { useTargetNetwork } from '~~/hooks/scaffold-eth/useTargetNetwork';
 import { useGlobalState } from '~~/services/store/store';
 import Link from 'next/link';
@@ -46,9 +45,6 @@ export const Footer = () => {
               </>
             )}
           </div>
-          <SwitchTheme
-            className={`pointer-events-auto ${isLocalNetwork ? 'self-end md:self-auto' : ''}`}
-          />
         </div>
       </div>
       <div className='w-full'>

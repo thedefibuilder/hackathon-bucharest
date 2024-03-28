@@ -4,11 +4,18 @@ import React from 'react';
 
 import StyledLink from '~~/components/styled-link';
 import { Separator } from '~~/components/ui/separator';
+import { Skeleton } from '~~/components/ui/skeleton';
 import useActivePath from '~~/hooks/use-active-path';
 import { routes } from '~~/lib/routes';
 import { cn } from '~~/lib/utils';
+import dynamic from 'next/dynamic';
 
 import Logo from './logo';
+
+const ThemeToggle = dynamic(() => import('../ui/theme-toggle'), {
+  ssr: false,
+  loading: () => <Skeleton className='h-10 w-10' />
+});
 
 export default function Navbar() {
   const checkActivePath = useActivePath();
@@ -39,6 +46,10 @@ export default function Navbar() {
           ))}
         </ul>
       </nav>
+
+      <div className='flex items-center'>
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
