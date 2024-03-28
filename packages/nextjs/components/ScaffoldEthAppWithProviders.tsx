@@ -17,6 +17,8 @@ import { useTheme } from 'next-themes';
 import { Toaster } from 'react-hot-toast';
 import { WagmiConfig } from 'wagmi';
 
+import SecondaryNav from './secondary-nav';
+
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   const price = useNativeCurrencyPrice();
   const setNativeCurrencyPrice = useGlobalState((state) => state.setNativeCurrencyPrice);
@@ -31,7 +33,8 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className='flex min-h-screen flex-col'>
         <Header />
-        <main className='relative flex flex-1 flex-col'>{children}</main>
+        <SecondaryNav />
+        <main className='relative flex h-full w-full flex-1 flex-col'>{children}</main>
         <Footer />
       </div>
       <Toaster />
