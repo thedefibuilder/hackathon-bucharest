@@ -113,23 +113,32 @@ contract PreSale is Ownable {
 
 		user.claimed = true;
 		uint40 vestStartTime = endTime;
-		LockupLinear.CreateWithRange memory lockup = LockupLinear
-			.CreateWithRange({
-				sender: address(this),
-				recipient: userAddress,
-				totalAmount: user.boughtAmount,
-				asset: offeringToken,
-				cancelable: false,
-				transferable: true,
-				range: LockupLinear.Range({
-					start: uint40(vestStartTime),
-					cliff: uint40(vestStartTime + cliffDuration),
-					end: uint40(vestStartTime + vestingDuration)
-				}),
-				broker: Broker({ fee: UD60x18.wrap(0), account: address(0) })
-			});
+		uint40 cliffTime = vestStartTime + cliffDuration;
+		uint40 vestEndTime = vestStartTime + vestingDuration;
+		if (block.timestamp < vestEndTime) {
+			LockupLinear.CreateWithRange memory lockup = LockupLinear
+				.CreateWithRange({
+					sender: address(this),
+					recipient: userAddress,
+					totalAmount: user.boughtAmount,
+					asset: offeringToken,
+					cancelable: false,
+					transferable: true,
+					range: LockupLinear.Range({
+						start: uint40(vestStartTime),
+						cliff: uint40(cliffTime),
+						end: uint40(vestEndTime)
+					}),
+					broker: Broker({
+						fee: UD60x18.wrap(0),
+						account: address(0)
+					})
+				});
 
-		sablierLockupLinear.createWithRange(lockup);
+			sablierLockupLinear.createWithRange(lockup);
+		} else {
+			offeringToken.transfer(userAddress, user.boughtAmount);
+		}
 	}
 
 	function claimToUserBatch(address[] calldata users) external {
@@ -172,6 +181,8 @@ contract PreSale is Ownable {
 
 	// toto: open lp or create stream
 	function withdrawPaymentToken() external onlyOwner {
+		if (block.timestamp < endTime) revert SaleNotEnded();
+
 		paymentToken.transfer(
 			msg.sender,
 			paymentToken.balanceOf(address(this))
