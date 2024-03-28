@@ -2,8 +2,8 @@
 
 import React, { PropsWithChildren } from 'react';
 
-import CLink from '~~/components/link';
 import Sidebar from '~~/components/sidebar';
+import StyledLink from '~~/components/styled-link';
 import useActivePath from '~~/hooks/use-active-path';
 
 const paths = {
@@ -38,13 +38,13 @@ export default function NewLayout({ children }: TNewLayout) {
             <p className='font-semibold'>{entry[0]}</p>
 
             {entry[1].map((path) => (
-              <CLink
+              <StyledLink
                 key={path.name}
                 href={path.href}
                 className={`btn ${checkActivePath(path.href) ? 'btn-secondary' : 'btn-primary'}`}
               >
                 {path.name}
-              </CLink>
+              </StyledLink>
             ))}
           </div>
         ))}
