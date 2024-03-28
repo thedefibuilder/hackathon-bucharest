@@ -17,7 +17,7 @@ const Home: NextPage = () => {
       <div className='flex flex-grow flex-col items-center pt-10'>
         <div className='px-5'>
           <h1 className='text-center'>
-            <span className='mb-2 block text-2xl'>Welcome to </span>
+            <span className='mb-2 block text-2xl'>Welcome to</span>
             <span className='block text-4xl font-bold'>Scaffold-ETH 2</span>
           </h1>
           <div className='flex items-center justify-center space-x-2'>
