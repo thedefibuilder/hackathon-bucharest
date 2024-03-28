@@ -16,6 +16,10 @@ const ThemeToggle = dynamic(() => import('../ui/theme-toggle'), {
   ssr: false,
   loading: () => <Skeleton className='h-10 w-10' />
 });
+const Wallet = dynamic(() => import('./wallet'), {
+  loading: () => <Skeleton className='rounded-medium h-10 w-32' />,
+  ssr: false
+});
 
 export default function Navbar() {
   const checkActivePath = useActivePath();
@@ -47,7 +51,8 @@ export default function Navbar() {
         </ul>
       </nav>
 
-      <div className='flex items-center'>
+      <div className='flex items-center gap-x-5'>
+        <Wallet className='w-32' />
         <ThemeToggle />
       </div>
     </header>
