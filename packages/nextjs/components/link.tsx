@@ -1,6 +1,6 @@
 import React, { ComponentProps } from 'react';
 
-import { cn } from '~~/utils/utils';
+import { cn } from '~~/lib/utils';
 import Link from 'next/link';
 
 type TCLink = ComponentProps<'a'>;
