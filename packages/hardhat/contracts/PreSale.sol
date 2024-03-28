@@ -3,6 +3,8 @@ pragma solidity 0.8.24;
 
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { Broker, LockupLinear, UD60x18 } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { ISablierV2Batch } from "@sablier/v2-periphery/src/interfaces/ISablierV2Batch.sol";
+import { Batch } from "@sablier/v2-periphery/src/types/DataTypes.sol";
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IERC20 } from "@openzeppelin/contracts/interfaces/IERC20.sol";
@@ -31,6 +33,7 @@ contract PreSale is Ownable {
 	uint256 public immutable offeringSupply;
 	uint256 public immutable offeringPrice;
 	ISablierV2LockupLinear public immutable sablierLockupLinear;
+	ISablierV2Batch public immutable sablierBatch;
 
 	uint40 public startTime;
 	uint40 public endTime;
@@ -51,8 +54,9 @@ contract PreSale is Ownable {
 		uint256 offeringSupply_,
 		uint256 offeringPrice_,
 		uint96 minParticipationAmount_,
-		uint96 maxParticipationAmount_,
+		uint128 maxParticipationAmount_,
 		ISablierV2LockupLinear sablierLockupLinear_,
+		ISablierV2Batch sablierBatch_,
 		uint40 cliffDuration_,
 		uint40 vestingDuration_
 	) Ownable(msg.sender) {
@@ -72,12 +76,14 @@ contract PreSale is Ownable {
 		minParticipationAmount = minParticipationAmount_;
 		maxParticipationAmount = maxParticipationAmount_;
 		sablierLockupLinear = sablierLockupLinear_;
+		sablierBatch = sablierBatch_;
 		cliffDuration = cliffDuration_;
 		vestingDuration = vestingDuration_;
 
 		// pre-approve from deployer required
 		offeringToken.transferFrom(msg.sender, address(this), offeringSupply);
 		offeringToken.approve(address(sablierLockupLinear), offeringSupply);
+		offeringToken.approve(address(sablierBatch), offeringSupply);
 	}
 
 	function buy(uint128 amount) external {
@@ -99,19 +105,19 @@ contract PreSale is Ownable {
 		claimToUser(msg.sender);
 	}
 
-	function claimToUser(address user) public {
-		UserInfo memory userInfo = userInfo[user];
+	function claimToUser(address userAddress) public {
+		UserInfo memory user = userInfo[userAddress];
 		if (block.timestamp < endTime) revert SaleNotEnded();
-		if (userInfo.claimed) revert AlreadyClaimed();
-		if (userInfo.boughtAmount == 0) revert InvalidAmount();
+		if (user.claimed) revert AlreadyClaimed();
+		if (user.boughtAmount == 0) revert InvalidAmount();
 
-		userInfo.claimed = true;
+		user.claimed = true;
 		uint40 vestStartTime = endTime;
 		LockupLinear.CreateWithRange memory lockup = LockupLinear
 			.CreateWithRange({
 				sender: address(this),
-				recipient: user,
-				totalAmount: userInfo.boughtAmount,
+				recipient: userAddress,
+				totalAmount: user.boughtAmount,
 				asset: offeringToken,
 				cancelable: false,
 				transferable: true,
@@ -122,6 +128,54 @@ contract PreSale is Ownable {
 				}),
 				broker: Broker({ fee: UD60x18.wrap(0), account: address(0) })
 			});
+
+		sablierLockupLinear.createWithRange(lockup);
+	}
+
+	function claimToUserBatch(address[] calldata users) external {
+		if (block.timestamp < endTime) revert SaleNotEnded();
+
+		Batch.CreateWithRange[] memory lockups = new Batch.CreateWithRange[](
+			users.length
+		);
+
+		for (uint256 i = 0; i < users.length; i++) {
+			address userAddress = users[i];
+			UserInfo memory user = userInfo[userAddress];
+
+			if (user.claimed) continue;
+			if (user.boughtAmount == 0) continue;
+
+			lockups[i] = Batch.CreateWithRange({
+				sender: address(this),
+				recipient: userAddress,
+				totalAmount: userInfo[userAddress].boughtAmount,
+				cancelable: false,
+				transferable: true,
+				range: LockupLinear.Range({
+					start: uint40(endTime),
+					cliff: uint40(endTime + cliffDuration),
+					end: uint40(endTime + vestingDuration)
+				}),
+				broker: Broker({ fee: UD60x18.wrap(0), account: address(0) })
+			});
+
+			userInfo[userAddress].claimed = true;
+		}
+
+		sablierBatch.createWithRange(
+			sablierLockupLinear,
+			offeringToken,
+			lockups
+		);
+	}
+
+	// toto: open lp or create stream
+	function withdrawPaymentToken() external onlyOwner {
+		paymentToken.transfer(
+			msg.sender,
+			paymentToken.balanceOf(address(this))
+		);
 	}
 
 	function setSalePeriod(
