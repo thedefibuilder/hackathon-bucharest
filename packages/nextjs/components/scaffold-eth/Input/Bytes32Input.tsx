@@ -1,8 +1,15 @@
-import { useCallback } from "react";
-import { hexToString, isHex, stringToHex } from "viem";
-import { CommonInputProps, InputBase } from "~~/components/scaffold-eth";
+import { useCallback } from 'react';
 
-export const Bytes32Input = ({ value, onChange, name, placeholder, disabled }: CommonInputProps) => {
+import { CommonInputProps, InputBase } from '~~/components/scaffold-eth';
+import { hexToString, isHex, stringToHex } from 'viem';
+
+export const Bytes32Input = ({
+  value,
+  onChange,
+  name,
+  placeholder,
+  disabled
+}: CommonInputProps) => {
   const convertStringToBytes32 = useCallback(() => {
     if (!value) {
       return;
@@ -19,7 +26,7 @@ export const Bytes32Input = ({ value, onChange, name, placeholder, disabled }: C
       disabled={disabled}
       suffix={
         <div
-          className="self-center cursor-pointer text-xl font-semibold px-4 text-accent"
+          className='cursor-pointer self-center px-4 text-xl font-semibold text-accent'
           onClick={convertStringToBytes32}
         >
           #

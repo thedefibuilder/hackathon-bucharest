@@ -1,6 +1,9 @@
 # folders
 .next
 node_modules/
+app/blockexplorer
+app/debug
+components/scaffold-eth
 # files
 **/*.less
 **/*.css

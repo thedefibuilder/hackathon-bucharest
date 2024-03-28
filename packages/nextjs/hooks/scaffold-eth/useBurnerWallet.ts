@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
-import { Chain, Hex, HttpTransport, PrivateKeyAccount, createWalletClient, http } from "viem";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { WalletClient, usePublicClient } from "wagmi";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-const burnerStorageKey = "scaffoldEth2.burnerWallet.sk";
+import { useLocalStorage } from 'usehooks-ts';
+import { Chain, createWalletClient, Hex, http, HttpTransport, PrivateKeyAccount } from 'viem';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { usePublicClient, WalletClient } from 'wagmi';
+
+const burnerStorageKey = 'scaffoldEth2.burnerWallet.sk';
 
 /**
  * Checks if the private key is valid
@@ -22,7 +23,7 @@ const newDefaultPrivateKey = generatePrivateKey();
  * Save the current burner private key to local storage
  */
 export const saveBurnerSK = (privateKey: Hex): void => {
-  if (typeof window != "undefined" && window != null) {
+  if (typeof window != 'undefined' && window != null) {
     window?.localStorage?.setItem(burnerStorageKey, privateKey);
   }
 };
@@ -31,9 +32,10 @@ export const saveBurnerSK = (privateKey: Hex): void => {
  * Gets the current burner private key from local storage
  */
 export const loadBurnerSK = (): Hex => {
-  let currentSk: Hex = "0x";
-  if (typeof window != "undefined" && window != null) {
-    currentSk = (window?.localStorage?.getItem?.(burnerStorageKey)?.replaceAll('"', "") ?? "0x") as Hex;
+  let currentSk: Hex = '0x';
+  if (typeof window != 'undefined' && window != null) {
+    currentSk = (window?.localStorage?.getItem?.(burnerStorageKey)?.replaceAll('"', '') ??
+      '0x') as Hex;
   }
 
   if (!!currentSk && isValidSk(currentSk)) {
@@ -58,12 +60,13 @@ type BurnerAccount = {
  */
 export const useBurnerWallet = (): BurnerAccount => {
   const [burnerSk, setBurnerSk] = useLocalStorage<Hex>(burnerStorageKey, newDefaultPrivateKey, {
-    initializeWithValue: false,
+    initializeWithValue: false
   });
 
   const publicClient = usePublicClient();
-  const [walletClient, setWalletClient] = useState<WalletClient<HttpTransport, Chain, PrivateKeyAccount>>();
-  const [generatedPrivateKey, setGeneratedPrivateKey] = useState<Hex>("0x");
+  const [walletClient, setWalletClient] =
+    useState<WalletClient<HttpTransport, Chain, PrivateKeyAccount>>();
+  const [generatedPrivateKey, setGeneratedPrivateKey] = useState<Hex>('0x');
   const [account, setAccount] = useState<PrivateKeyAccount>();
   const isCreatingNewBurnerRef = useRef(false);
 
@@ -73,7 +76,7 @@ export const useBurnerWallet = (): BurnerAccount => {
 
   const generateNewBurner = useCallback(() => {
     if (publicClient && !isCreatingNewBurnerRef.current) {
-      console.log("🔑 Create new burner wallet...");
+      console.log('🔑 Create new burner wallet...');
       isCreatingNewBurnerRef.current = true;
 
       const randomPrivateKey = generatePrivateKey();
@@ -82,7 +85,7 @@ export const useBurnerWallet = (): BurnerAccount => {
       const client = createWalletClient({
         chain: publicClient.chain,
         account: randomAccount,
-        transport: http(),
+        transport: http()
       });
 
       setWalletClient(client);
@@ -90,13 +93,13 @@ export const useBurnerWallet = (): BurnerAccount => {
       setAccount(randomAccount);
 
       setBurnerSk(() => {
-        console.log("🔥 Saving new burner wallet");
+        console.log('🔥 Saving new burner wallet');
         isCreatingNewBurnerRef.current = false;
         return randomPrivateKey;
       });
       return client;
     } else {
-      console.log("⚠ Could not create burner wallet");
+      console.log('⚠ Could not create burner wallet');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicClient.chain.id]);
@@ -114,7 +117,7 @@ export const useBurnerWallet = (): BurnerAccount => {
         wallet = createWalletClient({
           chain: publicClient.chain,
           account: randomAccount,
-          transport: http(),
+          transport: http()
         });
 
         setGeneratedPrivateKey(burnerSk);
@@ -124,7 +127,7 @@ export const useBurnerWallet = (): BurnerAccount => {
       }
 
       if (wallet == null) {
-        throw "Error:  Could not create burner wallet";
+        throw 'Error:  Could not create burner wallet';
       }
 
       setWalletClient(wallet);
@@ -138,6 +141,6 @@ export const useBurnerWallet = (): BurnerAccount => {
     walletClient,
     account,
     generateNewBurner,
-    saveBurner,
+    saveBurner
   };
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const ANIMATION_TIME = 2000;
 
@@ -15,6 +15,6 @@ export function useAnimationConfig(data: any) {
   }, [data, prevData]);
 
   return {
-    showAnimation,
+    showAnimation
   };
 }

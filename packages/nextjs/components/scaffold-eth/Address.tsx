@@ -1,21 +1,22 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Address as AddressType, getAddress, isAddress } from "viem";
-import { hardhat } from "viem/chains";
-import { useEnsAvatar, useEnsName } from "wagmi";
-import { CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import { BlockieAvatar } from "~~/components/scaffold-eth";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
+import { useEffect, useState } from 'react';
+
+import { CheckCircleIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
+import { BlockieAvatar } from '~~/components/scaffold-eth';
+import { useTargetNetwork } from '~~/hooks/scaffold-eth/useTargetNetwork';
+import { getBlockExplorerAddressLink } from '~~/utils/scaffold-eth';
+import Link from 'next/link';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Address as AddressType, getAddress, isAddress } from 'viem';
+import { hardhat } from 'viem/chains';
+import { useEnsAvatar, useEnsName } from 'wagmi';
 
 type AddressProps = {
   address?: AddressType;
   disableAddressLink?: boolean;
-  format?: "short" | "long";
-  size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl";
+  format?: 'short' | 'long';
+  size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl';
 };
 
 const blockieSizeMap = {
@@ -24,14 +25,14 @@ const blockieSizeMap = {
   base: 8,
   lg: 9,
   xl: 10,
-  "2xl": 12,
-  "3xl": 15,
+  '2xl': 12,
+  '3xl': 15
 };
 
 /**
  * Displays an address (or ENS) with a Blockie image and option to copy address.
  */
-export const Address = ({ address, disableAddressLink, format, size = "base" }: AddressProps) => {
+export const Address = ({ address, disableAddressLink, format, size = 'base' }: AddressProps) => {
   const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
@@ -41,14 +42,14 @@ export const Address = ({ address, disableAddressLink, format, size = "base" }: 
 
   const { data: fetchedEns } = useEnsName({
     address: checkSumAddress,
-    enabled: isAddress(checkSumAddress ?? ""),
-    chainId: 1,
+    enabled: isAddress(checkSumAddress ?? ''),
+    chainId: 1
   });
   const { data: fetchedEnsAvatar } = useEnsAvatar({
     name: fetchedEns,
     enabled: Boolean(fetchedEns),
     chainId: 1,
-    cacheTime: 30_000,
+    cacheTime: 30_000
   });
 
   // We need to apply this pattern to avoid Hydration errors.
@@ -63,35 +64,35 @@ export const Address = ({ address, disableAddressLink, format, size = "base" }: 
   // Skeleton UI
   if (!checkSumAddress) {
     return (
-      <div className="animate-pulse flex space-x-4">
-        <div className="rounded-md bg-slate-300 h-6 w-6"></div>
-        <div className="flex items-center space-y-6">
-          <div className="h-2 w-28 bg-slate-300 rounded"></div>
+      <div className='flex animate-pulse space-x-4'>
+        <div className='h-6 w-6 rounded-md bg-slate-300'></div>
+        <div className='flex items-center space-y-6'>
+          <div className='h-2 w-28 rounded bg-slate-300'></div>
         </div>
       </div>
     );
   }
 
   if (!isAddress(checkSumAddress)) {
-    return <span className="text-error">Wrong address</span>;
+    return <span className='text-error'>Wrong address</span>;
   }
 
   const blockExplorerAddressLink = getBlockExplorerAddressLink(targetNetwork, checkSumAddress);
-  let displayAddress = checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4);
+  let displayAddress = checkSumAddress?.slice(0, 6) + '...' + checkSumAddress?.slice(-4);
 
   if (ens) {
     displayAddress = ens;
-  } else if (format === "long") {
+  } else if (format === 'long') {
     displayAddress = checkSumAddress;
   }
 
   return (
-    <div className="flex items-center">
-      <div className="flex-shrink-0">
+    <div className='flex items-center'>
+      <div className='flex-shrink-0'>
         <BlockieAvatar
           address={checkSumAddress}
           ensImage={ensAvatar}
-          size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
+          size={(blockieSizeMap[size] * 24) / blockieSizeMap['base']}
         />
       </div>
       {disableAddressLink ? (
@@ -103,17 +104,17 @@ export const Address = ({ address, disableAddressLink, format, size = "base" }: 
       ) : (
         <a
           className={`ml-1.5 text-${size} font-normal`}
-          target="_blank"
+          target='_blank'
           href={blockExplorerAddressLink}
-          rel="noopener noreferrer"
+          rel='noopener noreferrer'
         >
           {displayAddress}
         </a>
       )}
       {addressCopied ? (
         <CheckCircleIcon
-          className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
-          aria-hidden="true"
+          className='ml-1.5 h-5 w-5 cursor-pointer text-xl font-normal text-sky-600'
+          aria-hidden='true'
         />
       ) : (
         <CopyToClipboard
@@ -126,8 +127,8 @@ export const Address = ({ address, disableAddressLink, format, size = "base" }: 
           }}
         >
           <DocumentDuplicateIcon
-            className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
-            aria-hidden="true"
+            className='ml-1.5 h-5 w-5 cursor-pointer text-xl font-normal text-sky-600'
+            aria-hidden='true'
           />
         </CopyToClipboard>
       )}

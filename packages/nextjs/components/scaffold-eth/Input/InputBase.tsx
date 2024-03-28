@@ -1,5 +1,6 @@
-import { ChangeEvent, FocusEvent, ReactNode, useCallback, useEffect, useRef } from "react";
-import { CommonInputProps } from "~~/components/scaffold-eth";
+import { ChangeEvent, FocusEvent, ReactNode, useCallback, useEffect, useRef } from 'react';
+
+import { CommonInputProps } from '~~/components/scaffold-eth';
 
 type InputBaseProps<T> = CommonInputProps<T> & {
   error?: boolean;
@@ -17,22 +18,22 @@ export const InputBase = <T extends { toString: () => string } | undefined = str
   disabled,
   prefix,
   suffix,
-  reFocus,
+  reFocus
 }: InputBaseProps<T>) => {
   const inputReft = useRef<HTMLInputElement>(null);
 
-  let modifier = "";
+  let modifier = '';
   if (error) {
-    modifier = "border-error";
+    modifier = 'border-error';
   } else if (disabled) {
-    modifier = "border-disabled bg-base-300";
+    modifier = 'border-disabled bg-base-300';
   }
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       onChange(e.target.value as unknown as T);
     },
-    [onChange],
+    [onChange]
   );
 
   // Runs only when reFocus prop is passed, usefull for setting the cursor
@@ -47,16 +48,18 @@ export const InputBase = <T extends { toString: () => string } | undefined = str
   }, [reFocus]);
 
   return (
-    <div className={`flex border-2 border-base-300 bg-base-200 rounded-full text-accent ${modifier}`}>
+    <div
+      className={`flex rounded-full border-2 border-base-300 bg-base-200 text-accent ${modifier}`}
+    >
       {prefix}
       <input
-        className="input input-ghost focus-within:border-transparent focus:outline-none focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[2.2rem] px-4 border w-full font-medium placeholder:text-accent/50 text-gray-400"
+        className='input input-ghost h-[2.2rem] min-h-[2.2rem] w-full border px-4 font-medium text-gray-400 placeholder:text-accent/50 focus-within:border-transparent focus:bg-transparent focus:text-gray-400 focus:outline-none'
         placeholder={placeholder}
         name={name}
         value={value?.toString()}
         onChange={handleChange}
         disabled={disabled}
-        autoComplete="off"
+        autoComplete='off'
         ref={inputReft}
         onFocus={onFocus}
       />
