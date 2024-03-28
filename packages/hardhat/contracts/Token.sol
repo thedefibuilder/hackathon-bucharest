@@ -21,12 +21,12 @@ contract Token is ERC20Capped, ERC20Burnable, Ownable {
 	}
 
 	function burn(uint256 value) public override {
-		require(isBurnable, "NO");
+		require(isBurnable, "DISABLED");
 		super.burn(value);
 	}
 
 	function burnFrom(address account, uint256 value) public override {
-		require(isBurnable, "NO");
+		require(isBurnable, "DISABLED");
 		super.burnFrom(account, value);
 	}
 
