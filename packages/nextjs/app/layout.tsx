@@ -10,6 +10,7 @@ import { Metadata } from 'next';
 import '~~/styles/globals.css';
 
 import ThemeProvider from '~~/components/theme-provider';
+import { Toaster } from '~~/components/ui/toast/toaster';
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -54,7 +55,11 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
     <html lang='en' suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+          <ScaffoldEthAppWithProviders>
+            {children}
+
+            <Toaster />
+          </ScaffoldEthAppWithProviders>
         </ThemeProvider>
       </body>
     </html>
