@@ -17,6 +17,7 @@
     "verify": "hardhat etherscan-verify"
   },
   "dependencies": {
+    "@ethersproject/address": "^5.7.0",
     "@openzeppelin/contracts": "^5.0.2",
     "@sablier/v2-core": "^1.1.2",
     "@sablier/v2-periphery": "^1.1.1",
