@@ -1,23 +1,25 @@
-import { useCallback, useEffect, useState } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
-import { Address } from "viem";
-import { useBalance } from "wagmi";
-import { useGlobalState } from "~~/services/store/store";
+import { useCallback, useEffect, useState } from 'react';
+
+import { useGlobalState } from '~~/services/store/store';
+import { Address } from 'viem';
+import { useBalance } from 'wagmi';
+
+import { useTargetNetwork } from './useTargetNetwork';
 
 export function useAccountBalance(address?: Address) {
   const [isEthBalance, setIsEthBalance] = useState(true);
   const [balance, setBalance] = useState<number | null>(null);
-  const price = useGlobalState(state => state.nativeCurrencyPrice);
+  const price = useGlobalState((state) => state.nativeCurrencyPrice);
   const { targetNetwork } = useTargetNetwork();
 
   const {
     data: fetchedBalanceData,
     isError,
-    isLoading,
+    isLoading
   } = useBalance({
     address,
     watch: true,
-    chainId: targetNetwork.id,
+    chainId: targetNetwork.id
   });
 
   const onToggleBalance = useCallback(() => {

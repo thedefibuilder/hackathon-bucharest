@@ -1,19 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
-import { Abi, AbiEvent, ExtractAbiEventNames } from "abitype";
-import { useInterval } from "usehooks-ts";
-import { Hash } from "viem";
-import * as chains from "viem/chains";
-import { usePublicClient } from "wagmi";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import scaffoldConfig from "~~/scaffold.config";
-import { replacer } from "~~/utils/scaffold-eth/common";
+import { useEffect, useMemo, useState } from 'react';
+
+import { useDeployedContractInfo } from '~~/hooks/scaffold-eth';
+import scaffoldConfig from '~~/scaffold.config';
+import { replacer } from '~~/utils/scaffold-eth/common';
 import {
   ContractAbi,
   ContractName,
   UseScaffoldEventHistoryConfig,
-  UseScaffoldEventHistoryData,
-} from "~~/utils/scaffold-eth/contract";
+  UseScaffoldEventHistoryData
+} from '~~/utils/scaffold-eth/contract';
+import { Abi, AbiEvent, ExtractAbiEventNames } from 'abitype';
+import { useInterval } from 'usehooks-ts';
+import { Hash } from 'viem';
+import * as chains from 'viem/chains';
+import { usePublicClient } from 'wagmi';
+
+import { useTargetNetwork } from './useTargetNetwork';
 
 /**
  * Reads events from a deployed contract
@@ -33,7 +35,7 @@ export const useScaffoldEventHistory = <
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
   TBlockData extends boolean = false,
   TTransactionData extends boolean = false,
-  TReceiptData extends boolean = false,
+  TReceiptData extends boolean = false
 >({
   contractName,
   eventName,
@@ -43,14 +45,21 @@ export const useScaffoldEventHistory = <
   transactionData,
   receiptData,
   watch,
-  enabled = true,
-}: UseScaffoldEventHistoryConfig<TContractName, TEventName, TBlockData, TTransactionData, TReceiptData>) => {
+  enabled = true
+}: UseScaffoldEventHistoryConfig<
+  TContractName,
+  TEventName,
+  TBlockData,
+  TTransactionData,
+  TReceiptData
+>) => {
   const [events, setEvents] = useState<any[]>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [fromBlockUpdated, setFromBlockUpdated] = useState<bigint>(fromBlock);
 
-  const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractName);
+  const { data: deployedContractData, isLoading: deployedContractLoading } =
+    useDeployedContractInfo(contractName);
   const publicClient = usePublicClient();
   const { targetNetwork } = useTargetNetwork();
 
@@ -58,15 +67,15 @@ export const useScaffoldEventHistory = <
     setIsLoading(true);
     try {
       if (!deployedContractData) {
-        throw new Error("Contract not found");
+        throw new Error('Contract not found');
       }
 
       if (!enabled) {
-        throw new Error("Hook disabled");
+        throw new Error('Hook disabled');
       }
 
       const event = (deployedContractData.abi as Abi).find(
-        part => part.type === "event" && part.name === eventName,
+        (part) => part.type === 'event' && part.name === eventName
       ) as AbiEvent;
 
       const blockNumber = await publicClient.getBlockNumber({ cacheTime: 0 });
@@ -77,7 +86,7 @@ export const useScaffoldEventHistory = <
           event,
           args: filters as any, // TODO: check if it works and fix type
           fromBlock: fromBlock || fromBlockUpdated,
-          toBlock: blockNumber,
+          toBlock: blockNumber
         });
         setFromBlockUpdated(blockNumber + 1n);
 
@@ -96,11 +105,13 @@ export const useScaffoldEventHistory = <
                 : null,
             receipt:
               receiptData && logs[i].transactionHash !== null
-                ? await publicClient.getTransactionReceipt({ hash: logs[i].transactionHash as Hash })
-                : null,
+                ? await publicClient.getTransactionReceipt({
+                    hash: logs[i].transactionHash as Hash
+                  })
+                : null
           });
         }
-        if (events && typeof fromBlock === "undefined") {
+        if (events && typeof fromBlock === 'undefined') {
           setEvents([...newEvents, ...events]);
         } else {
           setEvents(newEvents);
@@ -137,7 +148,7 @@ export const useScaffoldEventHistory = <
     JSON.stringify(filters, replacer),
     blockData,
     transactionData,
-    receiptData,
+    receiptData
   ]);
 
   useEffect(() => {
@@ -153,7 +164,7 @@ export const useScaffoldEventHistory = <
         readEvents();
       }
     },
-    watch ? (targetNetwork.id !== chains.hardhat.id ? scaffoldConfig.pollingInterval : 4_000) : null,
+    watch ? (targetNetwork.id !== chains.hardhat.id ? scaffoldConfig.pollingInterval : 4_000) : null
   );
 
   const eventHistoryData = useMemo(
@@ -165,13 +176,13 @@ export const useScaffoldEventHistory = <
         TTransactionData,
         TReceiptData
       >,
-    [events],
+    [events]
   );
 
   return {
     data: eventHistoryData,
     isLoading: isLoading,
-    error: error,
+    error: error
   };
 };
 

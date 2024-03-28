@@ -1,12 +1,16 @@
-import { AbiFunction, AbiParameter } from "abitype";
-import { AbiParameterTuple } from "~~/utils/scaffold-eth/contract";
+import { AbiParameterTuple } from '~~/utils/scaffold-eth/contract';
+import { AbiFunction, AbiParameter } from 'abitype';
 
 /**
  * Generates a key based on function metadata
  */
-const getFunctionInputKey = (functionName: string, input: AbiParameter, inputIndex: number): string => {
+const getFunctionInputKey = (
+  functionName: string,
+  input: AbiParameter,
+  inputIndex: number
+): string => {
   const name = input?.name || `input_${inputIndex}_`;
-  return functionName + "_" + name + "_" + input.internalType + "_" + input.type;
+  return functionName + '_' + name + '_' + input.internalType + '_' + input.type;
 };
 
 const isJsonString = (str: string) => {
@@ -20,7 +24,7 @@ const isJsonString = (str: string) => {
 
 // Recursive function to deeply parse JSON strings, correctly handling nested arrays and encoded JSON strings
 const deepParseValues = (value: any): any => {
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     if (isJsonString(value)) {
       const parsed = JSON.parse(value);
       return deepParseValues(parsed);
@@ -30,8 +34,8 @@ const deepParseValues = (value: any): any => {
     }
   } else if (Array.isArray(value)) {
     // If it's an array, recursively parse each element
-    return value.map(element => deepParseValues(element));
-  } else if (typeof value === "object" && value !== null) {
+    return value.map((element) => deepParseValues(element));
+  } else if (typeof value === 'object' && value !== null) {
     // If it's an object, recursively parse each value
     return Object.entries(value).reduce((acc: any, [key, val]) => {
       acc[key] = deepParseValues(val);
@@ -40,9 +44,21 @@ const deepParseValues = (value: any): any => {
   }
 
   // Handle boolean values represented as strings
-  if (value === "true" || value === "1" || value === "0x1" || value === "0x01" || value === "0x0001") {
+  if (
+    value === 'true' ||
+    value === '1' ||
+    value === '0x1' ||
+    value === '0x01' ||
+    value === '0x0001'
+  ) {
     return true;
-  } else if (value === "false" || value === "0" || value === "0x0" || value === "0x00" || value === "0x0000") {
+  } else if (
+    value === 'false' ||
+    value === '0' ||
+    value === '0x0' ||
+    value === '0x00' ||
+    value === '0x0000'
+  ) {
     return false;
   }
 
@@ -53,7 +69,7 @@ const deepParseValues = (value: any): any => {
  * parses form input with array support
  */
 const getParsedContractFunctionArgs = (form: Record<string, any>) => {
-  return Object.keys(form).map(key => {
+  return Object.keys(form).map((key) => {
     const valueOfArg = form[key];
 
     // Attempt to deeply parse JSON strings
@@ -66,7 +82,7 @@ const getInitialFormState = (abiFunction: AbiFunction) => {
   if (!abiFunction.inputs) return initialForm;
   abiFunction.inputs.forEach((input, inputIndex) => {
     const key = getFunctionInputKey(abiFunction.name, input, inputIndex);
-    initialForm[key] = "";
+    initialForm[key] = '';
   });
   return initialForm;
 };
@@ -76,8 +92,8 @@ const getInitalTupleFormState = (abiTupleParameter: AbiParameterTuple) => {
   if (abiTupleParameter.components.length === 0) return initialForm;
 
   abiTupleParameter.components.forEach((component, componentIndex) => {
-    const key = getFunctionInputKey(abiTupleParameter.name || "tuple", component, componentIndex);
-    initialForm[key] = "";
+    const key = getFunctionInputKey(abiTupleParameter.name || 'tuple', component, componentIndex);
+    initialForm[key] = '';
   });
   return initialForm;
 };
@@ -86,26 +102,30 @@ const getInitalTupleArrayFormState = (abiTupleParameter: AbiParameterTuple) => {
   const initialForm: Record<string, any> = {};
   if (abiTupleParameter.components.length === 0) return initialForm;
   abiTupleParameter.components.forEach((component, componentIndex) => {
-    const key = getFunctionInputKey("0_" + abiTupleParameter.name || "tuple", component, componentIndex);
-    initialForm[key] = "";
+    const key = getFunctionInputKey(
+      '0_' + abiTupleParameter.name || 'tuple',
+      component,
+      componentIndex
+    );
+    initialForm[key] = '';
   });
   return initialForm;
 };
 
 const adjustInput = (input: AbiParameterTuple): AbiParameter => {
-  if (input.type.startsWith("tuple[")) {
+  if (input.type.startsWith('tuple[')) {
     const depth = (input.type.match(/\[\]/g) || []).length;
     return {
       ...input,
       components: transformComponents(input.components, depth, {
-        internalType: input.internalType || "struct",
-        name: input.name,
-      }),
+        internalType: input.internalType || 'struct',
+        name: input.name
+      })
     };
   } else if (input.components) {
     return {
       ...input,
-      components: input.components.map(value => adjustInput(value as AbiParameterTuple)),
+      components: input.components.map((value) => adjustInput(value as AbiParameterTuple))
     };
   }
   return input;
@@ -114,7 +134,7 @@ const adjustInput = (input: AbiParameterTuple): AbiParameter => {
 const transformComponents = (
   components: readonly AbiParameter[],
   depth: number,
-  parentComponentData: { internalType?: string; name?: string },
+  parentComponentData: { internalType?: string; name?: string }
 ): AbiParameter[] => {
   // Base case: if depth is 1 or no components, return the original components
   if (depth === 1 || !components) {
@@ -123,10 +143,12 @@ const transformComponents = (
 
   // Recursive case: wrap components in an additional tuple layer
   const wrappedComponents: AbiParameter = {
-    internalType: `${parentComponentData.internalType || "struct"}`.replace(/\[\]/g, "") + "[]".repeat(depth - 1),
-    name: `${parentComponentData.name || "tuple"}`,
-    type: `tuple${"[]".repeat(depth - 1)}`,
-    components: transformComponents(components, depth - 1, parentComponentData),
+    internalType:
+      `${parentComponentData.internalType || 'struct'}`.replace(/\[\]/g, '') +
+      '[]'.repeat(depth - 1),
+    name: `${parentComponentData.name || 'tuple'}`,
+    type: `tuple${'[]'.repeat(depth - 1)}`,
+    components: transformComponents(components, depth - 1, parentComponentData)
   };
 
   return [wrappedComponents];
@@ -135,7 +157,7 @@ const transformComponents = (
 const transformAbiFunction = (abiFunction: AbiFunction): AbiFunction => {
   return {
     ...abiFunction,
-    inputs: abiFunction.inputs.map(value => adjustInput(value as AbiParameterTuple)),
+    inputs: abiFunction.inputs.map((value) => adjustInput(value as AbiParameterTuple))
   };
 };
 
@@ -145,5 +167,5 @@ export {
   getParsedContractFunctionArgs,
   getInitalTupleFormState,
   getInitalTupleArrayFormState,
-  transformAbiFunction,
+  transformAbiFunction
 };

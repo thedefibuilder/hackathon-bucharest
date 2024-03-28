@@ -1,8 +1,8 @@
-import { useTheme } from "next-themes";
-import { useNetwork, useSwitchNetwork } from "wagmi";
-import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
-import { getNetworkColor } from "~~/hooks/scaffold-eth";
-import { getTargetNetworks } from "~~/utils/scaffold-eth";
+import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
+import { getNetworkColor } from '~~/hooks/scaffold-eth';
+import { getTargetNetworks } from '~~/utils/scaffold-eth';
+import { useTheme } from 'next-themes';
+import { useNetwork, useSwitchNetwork } from 'wagmi';
 
 const allowedNetworks = getTargetNetworks();
 
@@ -14,27 +14,27 @@ export const NetworkOptions = ({ hidden = false }: NetworkOptionsProps) => {
   const { switchNetwork } = useSwitchNetwork();
   const { chain } = useNetwork();
   const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
+  const isDarkMode = resolvedTheme === 'dark';
 
   return (
     <>
       {allowedNetworks
-        .filter(allowedNetwork => allowedNetwork.id !== chain?.id)
-        .map(allowedNetwork => (
-          <li key={allowedNetwork.id} className={hidden ? "hidden" : ""}>
+        .filter((allowedNetwork) => allowedNetwork.id !== chain?.id)
+        .map((allowedNetwork) => (
+          <li key={allowedNetwork.id} className={hidden ? 'hidden' : ''}>
             <button
-              className="menu-item btn-sm !rounded-xl flex gap-3 py-3 whitespace-nowrap"
-              type="button"
+              className='menu-item btn-sm flex gap-3 whitespace-nowrap !rounded-xl py-3'
+              type='button'
               onClick={() => {
                 switchNetwork?.(allowedNetwork.id);
               }}
             >
-              <ArrowsRightLeftIcon className="h-6 w-4 ml-2 sm:ml-0" />
+              <ArrowsRightLeftIcon className='ml-2 h-6 w-4 sm:ml-0' />
               <span>
-                Switch to{" "}
+                Switch to{' '}
                 <span
                   style={{
-                    color: getNetworkColor(allowedNetwork, isDarkMode),
+                    color: getNetworkColor(allowedNetwork, isDarkMode)
                   }}
                 >
                   {allowedNetwork.name}

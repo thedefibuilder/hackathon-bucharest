@@ -1,8 +1,9 @@
-import { TransactionWithFunction } from "./block";
-import { GenericContractsDeclaration } from "./contract";
-import { Abi, decodeFunctionData, getAbiItem } from "viem";
-import { hardhat } from "viem/chains";
-import contractData from "~~/contracts/deployedContracts";
+import contractData from '~~/contracts/deployedContracts';
+import { Abi, decodeFunctionData, getAbiItem } from 'viem';
+import { hardhat } from 'viem/chains';
+
+import { TransactionWithFunction } from './block';
+import { GenericContractsDeclaration } from './contract';
 
 type ContractsInterfaces = Record<string, Abi>;
 type TransactionType = TransactionWithFunction | null;
@@ -17,20 +18,20 @@ const interfaces = chainMetaData
   : {};
 
 export const decodeTransactionData = (tx: TransactionWithFunction) => {
-  if (tx.input.length >= 10 && !tx.input.startsWith("0x60e06040")) {
+  if (tx.input.length >= 10 && !tx.input.startsWith('0x60e06040')) {
     for (const [, contractAbi] of Object.entries(interfaces)) {
       try {
         const { functionName, args } = decodeFunctionData({
           abi: contractAbi,
-          data: tx.input,
+          data: tx.input
         });
         tx.functionName = functionName;
         tx.functionArgs = args as any[];
         tx.functionArgNames = getAbiItem({ abi: contractAbi, name: functionName }).inputs.map(
-          (input: any) => input.name,
+          (input: any) => input.name
         );
         tx.functionArgTypes = getAbiItem({ abi: contractAbi, name: functionName }).inputs.map(
-          (input: any) => input.type,
+          (input: any) => input.type
         );
 
         break;
@@ -51,9 +52,10 @@ export const getFunctionDetails = (transaction: TransactionType) => {
     transaction.functionArgs
   ) {
     const details = transaction.functionArgNames.map(
-      (name, i) => `${transaction.functionArgTypes?.[i] || ""} ${name} = ${transaction.functionArgs?.[i] ?? ""}`,
+      (name, i) =>
+        `${transaction.functionArgTypes?.[i] || ''} ${name} = ${transaction.functionArgs?.[i] ?? ''}`
     );
-    return `${transaction.functionName}(${details.join(", ")})`;
+    return `${transaction.functionName}(${details.join(', ')})`;
   }
-  return "";
+  return '';
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
 /**
  * Handles clicks outside of passed ref element
@@ -17,7 +17,7 @@ export const useOutsideClick = (ref: React.RefObject<HTMLElement>, callback: { (
       }
     }
 
-    document.addEventListener("click", handleOutsideClick);
-    return () => document.removeEventListener("click", handleOutsideClick);
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
   }, [ref, callback]);
 };

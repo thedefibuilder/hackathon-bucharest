@@ -1,5 +1,5 @@
-import * as chains from "viem/chains";
-import scaffoldConfig from "~~/scaffold.config";
+import scaffoldConfig from '~~/scaffold.config';
+import * as chains from 'viem/chains';
 
 type ChainAttributes = {
   // color | [lightThemeColor, darkThemeColor]
@@ -13,49 +13,49 @@ export type ChainWithAttributes = chains.Chain & Partial<ChainAttributes>;
 
 export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
   [chains.hardhat.id]: {
-    color: "#b8af0c",
+    color: '#b8af0c'
   },
   [chains.mainnet.id]: {
-    color: "#ff8b9e",
+    color: '#ff8b9e'
   },
   [chains.sepolia.id]: {
-    color: ["#5f4bb6", "#87ff65"],
+    color: ['#5f4bb6', '#87ff65']
   },
   [chains.goerli.id]: {
-    color: "#0975F6",
+    color: '#0975F6'
   },
   [chains.gnosis.id]: {
-    color: "#48a9a6",
+    color: '#48a9a6'
   },
   [chains.polygon.id]: {
-    color: "#2bbdf7",
-    nativeCurrencyTokenAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+    color: '#2bbdf7',
+    nativeCurrencyTokenAddress: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0'
   },
   [chains.polygonMumbai.id]: {
-    color: "#92D9FA",
-    nativeCurrencyTokenAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+    color: '#92D9FA',
+    nativeCurrencyTokenAddress: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0'
   },
   [chains.optimismSepolia.id]: {
-    color: "#f01a37",
+    color: '#f01a37'
   },
   [chains.optimism.id]: {
-    color: "#f01a37",
+    color: '#f01a37'
   },
   [chains.arbitrumSepolia.id]: {
-    color: "#28a0f0",
+    color: '#28a0f0'
   },
   [chains.arbitrum.id]: {
-    color: "#28a0f0",
+    color: '#28a0f0'
   },
   [chains.fantom.id]: {
-    color: "#1969ff",
+    color: '#1969ff'
   },
   [chains.fantomTestnet.id]: {
-    color: "#1969ff",
+    color: '#1969ff'
   },
   [chains.scrollSepolia.id]: {
-    color: "#fbebd4",
-  },
+    color: '#fbebd4'
+  }
 };
 
 /**
@@ -64,13 +64,13 @@ export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
 export function getBlockExplorerTxLink(chainId: number, txnHash: string) {
   const chainNames = Object.keys(chains);
 
-  const targetChainArr = chainNames.filter(chainName => {
+  const targetChainArr = chainNames.filter((chainName) => {
     const wagmiChain = chains[chainName as keyof typeof chains];
     return wagmiChain.id === chainId;
   });
 
   if (targetChainArr.length === 0) {
-    return "";
+    return '';
   }
 
   const targetChain = targetChainArr[0] as keyof typeof chains;
@@ -78,7 +78,7 @@ export function getBlockExplorerTxLink(chainId: number, txnHash: string) {
   const blockExplorerTxURL = chains[targetChain]?.blockExplorers?.default?.url;
 
   if (!blockExplorerTxURL) {
-    return "";
+    return '';
   }
 
   return `${blockExplorerTxURL}/tx/${txnHash}`;
@@ -105,8 +105,8 @@ export function getBlockExplorerAddressLink(network: chains.Chain, address: stri
  * @returns targetNetworks array containing networks configured in scaffold.config including extra network metadata
  */
 export function getTargetNetworks(): ChainWithAttributes[] {
-  return scaffoldConfig.targetNetworks.map(targetNetwork => ({
+  return scaffoldConfig.targetNetworks.map((targetNetwork) => ({
     ...targetNetwork,
-    ...NETWORKS_EXTRA_DATA[targetNetwork.id],
+    ...NETWORKS_EXTRA_DATA[targetNetwork.id]
   }));
 }

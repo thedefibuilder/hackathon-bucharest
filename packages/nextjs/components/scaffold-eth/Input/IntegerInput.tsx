@@ -1,5 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
-import { CommonInputProps, InputBase, IntegerVariant, isValidInteger } from "~~/components/scaffold-eth";
+import { useCallback, useEffect, useState } from 'react';
+
+import {
+  CommonInputProps,
+  InputBase,
+  IntegerVariant,
+  isValidInteger
+} from '~~/components/scaffold-eth';
 
 type IntegerInputProps = CommonInputProps<string | bigint> & {
   variant?: IntegerVariant;
@@ -13,14 +19,14 @@ export const IntegerInput = ({
   placeholder,
   disabled,
   variant = IntegerVariant.UINT256,
-  disableMultiplyBy1e18 = false,
+  disableMultiplyBy1e18 = false
 }: IntegerInputProps) => {
   const [inputError, setInputError] = useState(false);
   const multiplyBy1e18 = useCallback(() => {
     if (!value) {
       return;
     }
-    if (typeof value === "bigint") {
+    if (typeof value === 'bigint') {
       return onChange(value * 10n ** 18n);
     }
     return onChange(BigInt(Math.round(Number(value) * 10 ** 18)));
@@ -46,11 +52,11 @@ export const IntegerInput = ({
         !inputError &&
         !disableMultiplyBy1e18 && (
           <div
-            className="space-x-4 flex tooltip tooltip-top tooltip-secondary before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
-            data-tip="Multiply by 10^18 (wei)"
+            className='tooltip tooltip-top tooltip-secondary flex space-x-4 before:left-auto before:right-[-10px] before:transform-none before:content-[attr(data-tip)]'
+            data-tip='Multiply by 10^18 (wei)'
           >
             <button
-              className={`${disabled ? "cursor-not-allowed" : "cursor-pointer"} font-semibold px-4 text-accent`}
+              className={`${disabled ? 'cursor-not-allowed' : 'cursor-pointer'} px-4 font-semibold text-accent`}
               onClick={multiplyBy1e18}
               disabled={disabled}
             >

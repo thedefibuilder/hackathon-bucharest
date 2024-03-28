@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { isAddress, isHex } from "viem";
-import { hardhat } from "viem/chains";
-import { usePublicClient } from "wagmi";
+import { useState } from 'react';
+
+import { useRouter } from 'next/navigation';
+import { isAddress, isHex } from 'viem';
+import { hardhat } from 'viem/chains';
+import { usePublicClient } from 'wagmi';
 
 export const SearchBar = () => {
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState('');
   const router = useRouter();
 
   const client = usePublicClient({ chainId: hardhat.id });
@@ -22,7 +23,7 @@ export const SearchBar = () => {
           return;
         }
       } catch (error) {
-        console.error("Failed to fetch transaction:", error);
+        console.error('Failed to fetch transaction:', error);
       }
     }
 
@@ -33,15 +34,15 @@ export const SearchBar = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="flex items-center justify-end mb-5 space-x-3 mx-5">
+    <form onSubmit={handleSearch} className='mx-5 mb-5 flex items-center justify-end space-x-3'>
       <input
-        className="border-primary bg-base-100 text-base-content p-2 mr-2 w-full md:w-1/2 lg:w-1/3 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-accent"
-        type="text"
+        className='mr-2 w-full rounded-md border-primary bg-base-100 p-2 text-base-content shadow-md focus:outline-none focus:ring-2 focus:ring-accent md:w-1/2 lg:w-1/3'
+        type='text'
         value={searchInput}
-        placeholder="Search by hash or address"
-        onChange={e => setSearchInput(e.target.value)}
+        placeholder='Search by hash or address'
+        onChange={(e) => setSearchInput(e.target.value)}
       />
-      <button className="btn btn-sm btn-primary" type="submit">
+      <button className='btn btn-primary btn-sm' type='submit'>
         Search
       </button>
     </form>

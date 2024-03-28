@@ -1,21 +1,23 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { InheritanceTooltip } from "./InheritanceTooltip";
-import { Abi, AbiFunction } from "abitype";
-import { Address, TransactionReceipt } from "viem";
-import { useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
+import { useEffect, useState } from 'react';
+
 import {
   ContractInput,
-  TxReceipt,
   getFunctionInputKey,
   getInitialFormState,
   getParsedContractFunctionArgs,
   transformAbiFunction,
-} from "~~/app/debug/_components/contract";
-import { IntegerInput } from "~~/components/scaffold-eth";
-import { useTransactor } from "~~/hooks/scaffold-eth";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+  TxReceipt
+} from '~~/app/debug/_components/contract';
+import { IntegerInput } from '~~/components/scaffold-eth';
+import { useTransactor } from '~~/hooks/scaffold-eth';
+import { useTargetNetwork } from '~~/hooks/scaffold-eth/useTargetNetwork';
+import { Abi, AbiFunction } from 'abitype';
+import { Address, TransactionReceipt } from 'viem';
+import { useContractWrite, useNetwork, useWaitForTransaction } from 'wagmi';
+
+import { InheritanceTooltip } from './InheritanceTooltip';
 
 type WriteOnlyFunctionFormProps = {
   abi: Abi;
@@ -30,10 +32,10 @@ export const WriteOnlyFunctionForm = ({
   abiFunction,
   onChange,
   contractAddress,
-  inheritedFrom,
+  inheritedFrom
 }: WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() => getInitialFormState(abiFunction));
-  const [txValue, setTxValue] = useState<string | bigint>("");
+  const [txValue, setTxValue] = useState<string | bigint>('');
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
   const { targetNetwork } = useTargetNetwork();
@@ -42,12 +44,12 @@ export const WriteOnlyFunctionForm = ({
   const {
     data: result,
     isLoading,
-    writeAsync,
+    writeAsync
   } = useContractWrite({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: abi,
-    args: getParsedContractFunctionArgs(form),
+    args: getParsedContractFunctionArgs(form)
   });
 
   const handleWrite = async () => {
@@ -57,14 +59,14 @@ export const WriteOnlyFunctionForm = ({
         await writeTxn(makeWriteWithParams);
         onChange();
       } catch (e: any) {
-        console.error("⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error", e);
+        console.error('⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error', e);
       }
     }
   };
 
   const [displayedTxResult, setDisplayedTxResult] = useState<TransactionReceipt>();
   const { data: txResult } = useWaitForTransaction({
-    hash: result?.hash,
+    hash: result?.hash
   });
   useEffect(() => {
     setDisplayedTxResult(txResult);
@@ -77,7 +79,7 @@ export const WriteOnlyFunctionForm = ({
     return (
       <ContractInput
         key={key}
-        setForm={updatedFormValue => {
+        setForm={(updatedFormValue) => {
           setDisplayedTxResult(undefined);
           setForm(updatedFormValue);
         }}
@@ -87,54 +89,60 @@ export const WriteOnlyFunctionForm = ({
       />
     );
   });
-  const zeroInputs = inputs.length === 0 && abiFunction.stateMutability !== "payable";
+  const zeroInputs = inputs.length === 0 && abiFunction.stateMutability !== 'payable';
 
   return (
-    <div className="py-5 space-y-3 first:pt-0 last:pb-1">
-      <div className={`flex gap-3 ${zeroInputs ? "flex-row justify-between items-center" : "flex-col"}`}>
-        <p className="font-medium my-0 break-words">
+    <div className='space-y-3 py-5 first:pt-0 last:pb-1'>
+      <div
+        className={`flex gap-3 ${zeroInputs ? 'flex-row items-center justify-between' : 'flex-col'}`}
+      >
+        <p className='my-0 break-words font-medium'>
           {abiFunction.name}
           <InheritanceTooltip inheritedFrom={inheritedFrom} />
         </p>
         {inputs}
-        {abiFunction.stateMutability === "payable" ? (
-          <div className="flex flex-col gap-1.5 w-full">
-            <div className="flex items-center ml-2">
-              <span className="text-xs font-medium mr-2 leading-none">payable value</span>
-              <span className="block text-xs font-extralight leading-none">wei</span>
+        {abiFunction.stateMutability === 'payable' ? (
+          <div className='flex w-full flex-col gap-1.5'>
+            <div className='ml-2 flex items-center'>
+              <span className='mr-2 text-xs font-medium leading-none'>payable value</span>
+              <span className='block text-xs font-extralight leading-none'>wei</span>
             </div>
             <IntegerInput
               value={txValue}
-              onChange={updatedTxValue => {
+              onChange={(updatedTxValue) => {
                 setDisplayedTxResult(undefined);
                 setTxValue(updatedTxValue);
               }}
-              placeholder="value (wei)"
+              placeholder='value (wei)'
             />
           </div>
         ) : null}
-        <div className="flex justify-between gap-2">
+        <div className='flex justify-between gap-2'>
           {!zeroInputs && (
-            <div className="flex-grow basis-0">
+            <div className='flex-grow basis-0'>
               {displayedTxResult ? <TxReceipt txResult={displayedTxResult} /> : null}
             </div>
           )}
           <div
             className={`flex ${
               writeDisabled &&
-              "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
+              'tooltip before:left-auto before:right-[-10px] before:transform-none before:content-[attr(data-tip)]'
             }`}
-            data-tip={`${writeDisabled && "Wallet not connected or in the wrong network"}`}
+            data-tip={`${writeDisabled && 'Wallet not connected or in the wrong network'}`}
           >
-            <button className="btn btn-secondary btn-sm" disabled={writeDisabled || isLoading} onClick={handleWrite}>
-              {isLoading && <span className="loading loading-spinner loading-xs"></span>}
+            <button
+              className='btn btn-secondary btn-sm'
+              disabled={writeDisabled || isLoading}
+              onClick={handleWrite}
+            >
+              {isLoading && <span className='loading loading-spinner loading-xs'></span>}
               Send 💸
             </button>
           </div>
         </div>
       </div>
       {zeroInputs && txResult ? (
-        <div className="flex-grow basis-0">
+        <div className='flex-grow basis-0'>
           <TxReceipt txResult={txResult} />
         </div>
       ) : null}

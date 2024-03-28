@@ -1,12 +1,16 @@
-import { useState } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
-import { Abi, ExtractAbiFunctionNames } from "abitype";
-import { useContractWrite, useNetwork } from "wagmi";
-import { useDeployedContractInfo, useTransactor } from "~~/hooks/scaffold-eth";
-import { notification } from "~~/utils/scaffold-eth";
-import { ContractAbi, ContractName, UseScaffoldWriteConfig } from "~~/utils/scaffold-eth/contract";
+import { useState } from 'react';
 
-type UpdatedArgs = Parameters<ReturnType<typeof useContractWrite<Abi, string, undefined>>["writeAsync"]>[0];
+import { useDeployedContractInfo, useTransactor } from '~~/hooks/scaffold-eth';
+import { notification } from '~~/utils/scaffold-eth';
+import { ContractAbi, ContractName, UseScaffoldWriteConfig } from '~~/utils/scaffold-eth/contract';
+import { Abi, ExtractAbiFunctionNames } from 'abitype';
+import { useContractWrite, useNetwork } from 'wagmi';
+
+import { useTargetNetwork } from './useTargetNetwork';
+
+type UpdatedArgs = Parameters<
+  ReturnType<typeof useContractWrite<Abi, string, undefined>>['writeAsync']
+>[0];
 
 /**
  * Wrapper around wagmi's useContractWrite hook which automatically loads (by name) the contract ABI and address from
@@ -21,7 +25,10 @@ type UpdatedArgs = Parameters<ReturnType<typeof useContractWrite<Abi, string, un
  */
 export const useScaffoldContractWrite = <
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNames<ContractAbi<TContractName>, "nonpayable" | "payable">,
+  TFunctionName extends ExtractAbiFunctionNames<
+    ContractAbi<TContractName>,
+    'nonpayable' | 'payable'
+  >
 >({
   contractName,
   functionName,
@@ -44,7 +51,7 @@ export const useScaffoldContractWrite = <
     functionName: functionName as any,
     args: args as unknown[],
     value: value,
-    ...writeConfig,
+    ...writeConfig
   });
 
   const sendContractWriteTx = async ({
@@ -52,19 +59,19 @@ export const useScaffoldContractWrite = <
     value: newValue,
     ...otherConfig
   }: {
-    args?: UseScaffoldWriteConfig<TContractName, TFunctionName>["args"];
-    value?: UseScaffoldWriteConfig<TContractName, TFunctionName>["value"];
+    args?: UseScaffoldWriteConfig<TContractName, TFunctionName>['args'];
+    value?: UseScaffoldWriteConfig<TContractName, TFunctionName>['value'];
   } & UpdatedArgs = {}) => {
     if (!deployedContractData) {
-      notification.error("Target Contract is not deployed, did you forget to run `yarn deploy`?");
+      notification.error('Target Contract is not deployed, did you forget to run `yarn deploy`?');
       return;
     }
     if (!chain?.id) {
-      notification.error("Please connect your wallet");
+      notification.error('Please connect your wallet');
       return;
     }
     if (chain?.id !== targetNetwork.id) {
-      notification.error("You are on the wrong network");
+      notification.error('You are on the wrong network');
       return;
     }
 
@@ -76,9 +83,9 @@ export const useScaffoldContractWrite = <
             wagmiContractWrite.writeAsync({
               args: newArgs ?? args,
               value: newValue ?? value,
-              ...otherConfig,
+              ...otherConfig
             }),
-          { onBlockConfirmation, blockConfirmations },
+          { onBlockConfirmation, blockConfirmations }
         );
 
         return writeTxResult;
@@ -88,7 +95,7 @@ export const useScaffoldContractWrite = <
         setIsMining(false);
       }
     } else {
-      notification.error("Contract writer error. Try again.");
+      notification.error('Contract writer error. Try again.');
       return;
     }
   };
@@ -97,6 +104,6 @@ export const useScaffoldContractWrite = <
     ...wagmiContractWrite,
     isMining,
     // Overwrite wagmi's write async
-    writeAsync: sendContractWriteTx,
+    writeAsync: sendContractWriteTx
   };
 };
