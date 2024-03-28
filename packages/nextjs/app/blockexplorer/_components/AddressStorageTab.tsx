@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Address, createPublicClient, http, toHex } from "viem";
-import { hardhat } from "viem/chains";
+import { useEffect, useState } from 'react';
+
+import { Address, createPublicClient, http, toHex } from 'viem';
+import { hardhat } from 'viem/chains';
 
 const publicClient = createPublicClient({
   chain: hardhat,
-  transport: http(),
+  transport: http()
 });
 
 export const AddressStorageTab = ({ address }: { address: Address }) => {
@@ -21,10 +22,10 @@ export const AddressStorageTab = ({ address }: { address: Address }) => {
         while (true) {
           const storageAtPosition = await publicClient.getStorageAt({
             address: address,
-            slot: toHex(idx),
+            slot: toHex(idx)
           });
 
-          if (storageAtPosition === "0x" + "0".repeat(64)) break;
+          if (storageAtPosition === '0x' + '0'.repeat(64)) break;
 
           if (storageAtPosition) {
             storageData.push(storageAtPosition);
@@ -34,7 +35,7 @@ export const AddressStorageTab = ({ address }: { address: Address }) => {
         }
         setStorage(storageData);
       } catch (error) {
-        console.error("Failed to fetch storage:", error);
+        console.error('Failed to fetch storage:', error);
       }
     };
 
@@ -42,10 +43,10 @@ export const AddressStorageTab = ({ address }: { address: Address }) => {
   }, [address]);
 
   return (
-    <div className="flex flex-col gap-3 p-4">
+    <div className='flex flex-col gap-3 p-4'>
       {storage.length > 0 ? (
-        <div className="mockup-code overflow-auto max-h-[500px]">
-          <pre className="px-5 whitespace-pre-wrap break-words">
+        <div className='mockup-code max-h-[500px] overflow-auto'>
+          <pre className='whitespace-pre-wrap break-words px-5'>
             {storage.map((data, i) => (
               <div key={i}>
                 <strong>Storage Slot {i}:</strong> {data}
@@ -54,7 +55,7 @@ export const AddressStorageTab = ({ address }: { address: Address }) => {
           </pre>
         </div>
       ) : (
-        <div className="text-lg">This contract does not have any variables.</div>
+        <div className='text-lg'>This contract does not have any variables.</div>
       )}
     </div>
   );

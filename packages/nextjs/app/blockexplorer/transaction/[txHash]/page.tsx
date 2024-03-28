@@ -1,15 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import type { NextPage } from "next";
-import { Hash, Transaction, TransactionReceipt, formatEther, formatUnits } from "viem";
-import { hardhat } from "viem/chains";
-import { usePublicClient } from "wagmi";
-import { Address } from "~~/components/scaffold-eth";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { decodeTransactionData, getFunctionDetails } from "~~/utils/scaffold-eth";
-import { replacer } from "~~/utils/scaffold-eth/common";
+import { useEffect, useState } from 'react';
+
+import type { NextPage } from 'next';
+
+import { Address } from '~~/components/scaffold-eth';
+import { useTargetNetwork } from '~~/hooks/scaffold-eth/useTargetNetwork';
+import { decodeTransactionData, getFunctionDetails } from '~~/utils/scaffold-eth';
+import { replacer } from '~~/utils/scaffold-eth/common';
+import { useRouter } from 'next/navigation';
+import { formatEther, formatUnits, Hash, Transaction, TransactionReceipt } from 'viem';
+import { hardhat } from 'viem/chains';
+import { usePublicClient } from 'wagmi';
 
 type PageProps = {
   params: { txHash?: Hash };
@@ -43,14 +45,16 @@ const TransactionPage: NextPage<PageProps> = ({ params }: PageProps) => {
   }, [client, txHash]);
 
   return (
-    <div className="container mx-auto mt-10 mb-20 px-10 md:px-0">
-      <button className="btn btn-sm btn-primary" onClick={() => router.back()}>
+    <div className='container mx-auto mb-20 mt-10 px-10 md:px-0'>
+      <button className='btn btn-primary btn-sm' onClick={() => router.back()}>
         Back
       </button>
       {transaction ? (
-        <div className="overflow-x-auto">
-          <h2 className="text-3xl font-bold mb-4 text-center text-primary-content">Transaction Details</h2>{" "}
-          <table className="table rounded-lg bg-base-100 w-full shadow-lg md:table-lg table-md">
+        <div className='overflow-x-auto'>
+          <h2 className='mb-4 text-center text-3xl font-bold text-primary-content'>
+            Transaction Details
+          </h2>{' '}
+          <table className='table table-md w-full rounded-lg bg-base-100 shadow-lg md:table-lg'>
             <tbody>
               <tr>
                 <td>
@@ -69,7 +73,7 @@ const TransactionPage: NextPage<PageProps> = ({ params }: PageProps) => {
                   <strong>From:</strong>
                 </td>
                 <td>
-                  <Address address={transaction.from} format="long" />
+                  <Address address={transaction.from} format='long' />
                 </td>
               </tr>
               <tr>
@@ -78,11 +82,11 @@ const TransactionPage: NextPage<PageProps> = ({ params }: PageProps) => {
                 </td>
                 <td>
                   {!receipt?.contractAddress ? (
-                    transaction.to && <Address address={transaction.to} format="long" />
+                    transaction.to && <Address address={transaction.to} format='long' />
                   ) : (
                     <span>
                       Contract Creation:
-                      <Address address={receipt.contractAddress} format="long" />
+                      <Address address={receipt.contractAddress} format='long' />
                     </span>
                   )}
                 </td>
@@ -100,13 +104,13 @@ const TransactionPage: NextPage<PageProps> = ({ params }: PageProps) => {
                   <strong>Function called:</strong>
                 </td>
                 <td>
-                  <div className="w-full md:max-w-[600px] lg:max-w-[800px] overflow-x-auto whitespace-nowrap">
-                    {functionCalled === "0x" ? (
-                      "This transaction did not call any function."
+                  <div className='w-full overflow-x-auto whitespace-nowrap md:max-w-[600px] lg:max-w-[800px]'>
+                    {functionCalled === '0x' ? (
+                      'This transaction did not call any function.'
                     ) : (
                       <>
-                        <span className="mr-2">{getFunctionDetails(transaction)}</span>
-                        <span className="badge badge-primary font-bold">{functionCalled}</span>
+                        <span className='mr-2'>{getFunctionDetails(transaction)}</span>
+                        <span className='badge badge-primary font-bold'>{functionCalled}</span>
                       </>
                     )}
                   </div>
@@ -122,8 +126,12 @@ const TransactionPage: NextPage<PageProps> = ({ params }: PageProps) => {
                 <td>
                   <strong>Data:</strong>
                 </td>
-                <td className="form-control">
-                  <textarea readOnly value={transaction.input} className="p-0 textarea-primary bg-inherit h-[150px]" />
+                <td className='form-control'>
+                  <textarea
+                    readOnly
+                    value={transaction.input}
+                    className='textarea-primary h-[150px] bg-inherit p-0'
+                  />
                 </td>
               </tr>
               <tr>
@@ -144,7 +152,7 @@ const TransactionPage: NextPage<PageProps> = ({ params }: PageProps) => {
           </table>
         </div>
       ) : (
-        <p className="text-2xl text-base-content">Loading...</p>
+        <p className='text-2xl text-base-content'>Loading...</p>
       )}
     </div>
   );

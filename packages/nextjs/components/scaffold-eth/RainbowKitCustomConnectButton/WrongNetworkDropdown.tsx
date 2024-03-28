@@ -1,28 +1,29 @@
-import { NetworkOptions } from "./NetworkOptions";
-import { useDisconnect } from "wagmi";
-import { ArrowLeftOnRectangleIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftOnRectangleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useDisconnect } from 'wagmi';
+
+import { NetworkOptions } from './NetworkOptions';
 
 export const WrongNetworkDropdown = () => {
   const { disconnect } = useDisconnect();
 
   return (
-    <div className="dropdown dropdown-end mr-2">
-      <label tabIndex={0} className="btn btn-error btn-sm dropdown-toggle gap-1">
+    <div className='dropdown dropdown-end mr-2'>
+      <label tabIndex={0} className='dropdown-toggle btn btn-error btn-sm gap-1'>
         <span>Wrong network</span>
-        <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
+        <ChevronDownIcon className='ml-2 h-6 w-4 sm:ml-0' />
       </label>
       <ul
         tabIndex={0}
-        className="dropdown-content menu p-2 mt-1 shadow-center shadow-accent bg-base-200 rounded-box gap-1"
+        className='menu dropdown-content mt-1 gap-1 rounded-box bg-base-200 p-2 shadow-center shadow-accent'
       >
         <NetworkOptions />
         <li>
           <button
-            className="menu-item text-error btn-sm !rounded-xl flex gap-3 py-3"
-            type="button"
+            className='menu-item btn-sm flex gap-3 !rounded-xl py-3 text-error'
+            type='button'
             onClick={() => disconnect()}
           >
-            <ArrowLeftOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" />
+            <ArrowLeftOnRectangleIcon className='ml-2 h-6 w-4 sm:ml-0' />
             <span>Disconnect</span>
           </button>
         </li>

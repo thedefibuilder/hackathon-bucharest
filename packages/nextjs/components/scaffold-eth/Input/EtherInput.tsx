@@ -1,11 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
-import { ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
-import { CommonInputProps, InputBase, SIGNED_NUMBER_REGEX } from "~~/components/scaffold-eth";
-import { useGlobalState } from "~~/services/store/store";
+import { useEffect, useMemo, useState } from 'react';
+
+import { ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
+import { CommonInputProps, InputBase, SIGNED_NUMBER_REGEX } from '~~/components/scaffold-eth';
+import { useGlobalState } from '~~/services/store/store';
 
 const MAX_DECIMALS_USD = 2;
 
-function etherValueToDisplayValue(usdMode: boolean, etherValue: string, nativeCurrencyPrice: number) {
+function etherValueToDisplayValue(
+  usdMode: boolean,
+  etherValue: string,
+  nativeCurrencyPrice: number
+) {
   if (usdMode && nativeCurrencyPrice) {
     const parsedEthValue = parseFloat(etherValue);
     if (Number.isNaN(parsedEthValue)) {
@@ -23,7 +28,11 @@ function etherValueToDisplayValue(usdMode: boolean, etherValue: string, nativeCu
   }
 }
 
-function displayValueToEtherValue(usdMode: boolean, displayValue: string, nativeCurrencyPrice: number) {
+function displayValueToEtherValue(
+  usdMode: boolean,
+  displayValue: string,
+  nativeCurrencyPrice: number
+) {
   if (usdMode && nativeCurrencyPrice) {
     const parsedDisplayValue = parseFloat(displayValue);
     if (Number.isNaN(parsedDisplayValue)) {
@@ -49,11 +58,13 @@ export const EtherInput = ({
   placeholder,
   onChange,
   disabled,
-  usdMode,
+  usdMode
 }: CommonInputProps & { usdMode?: boolean }) => {
   const [transitoryDisplayValue, setTransitoryDisplayValue] = useState<string>();
-  const nativeCurrencyPrice = useGlobalState(state => state.nativeCurrencyPrice);
-  const [internalUsdMode, setInternalUSDMode] = useState(nativeCurrencyPrice > 0 ? Boolean(usdMode) : false);
+  const nativeCurrencyPrice = useGlobalState((state) => state.nativeCurrencyPrice);
+  const [internalUsdMode, setInternalUSDMode] = useState(
+    nativeCurrencyPrice > 0 ? Boolean(usdMode) : false
+  );
 
   useEffect(() => {
     setInternalUSDMode(nativeCurrencyPrice > 0 ? Boolean(usdMode) : false);
@@ -63,7 +74,10 @@ export const EtherInput = ({
   // In usdMode, it is converted to its usd value, in regular mode it is unaltered
   const displayValue = useMemo(() => {
     const newDisplayValue = etherValueToDisplayValue(internalUsdMode, value, nativeCurrencyPrice);
-    if (transitoryDisplayValue && parseFloat(newDisplayValue) === parseFloat(transitoryDisplayValue)) {
+    if (
+      transitoryDisplayValue &&
+      parseFloat(newDisplayValue) === parseFloat(transitoryDisplayValue)
+    ) {
       return transitoryDisplayValue;
     }
     // Clear any transitory display values that might be set
@@ -79,7 +93,7 @@ export const EtherInput = ({
     // Following condition is a fix to prevent usdMode from experiencing different display values
     // than what the user entered. This can happen due to floating point rounding errors that are introduced in the back and forth conversion
     if (internalUsdMode) {
-      const decimals = newValue.split(".")[1];
+      const decimals = newValue.split('.')[1];
       if (decimals && decimals.length > MAX_DECIMALS_USD) {
         return;
       }
@@ -87,7 +101,7 @@ export const EtherInput = ({
 
     // Since the display value is a derived state (calculated from the ether value), usdMode would not allow introducing a decimal point.
     // This condition handles a transitory state for a display value with a trailing decimal sign
-    if (newValue.endsWith(".") || newValue.endsWith(".0")) {
+    if (newValue.endsWith('.') || newValue.endsWith('.0')) {
       setTransitoryDisplayValue(newValue);
     } else {
       setTransitoryDisplayValue(undefined);
@@ -110,22 +124,24 @@ export const EtherInput = ({
       placeholder={placeholder}
       onChange={handleChangeNumber}
       disabled={disabled}
-      prefix={<span className="pl-4 -mr-2 text-accent self-center">{internalUsdMode ? "$" : "Ξ"}</span>}
+      prefix={
+        <span className='-mr-2 self-center pl-4 text-accent'>{internalUsdMode ? '$' : 'Ξ'}</span>
+      }
       suffix={
         <div
           className={`${
             nativeCurrencyPrice > 0
-              ? ""
-              : "tooltip tooltip-secondary before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
+              ? ''
+              : 'tooltip tooltip-secondary before:left-auto before:right-[-10px] before:transform-none before:content-[attr(data-tip)]'
           }`}
-          data-tip="Unable to fetch price"
+          data-tip='Unable to fetch price'
         >
           <button
-            className="btn btn-primary h-[2.2rem] min-h-[2.2rem]"
+            className='btn btn-primary h-[2.2rem] min-h-[2.2rem]'
             onClick={toggleMode}
             disabled={!internalUsdMode && !nativeCurrencyPrice}
           >
-            <ArrowsRightLeftIcon className="h-3 w-3 cursor-pointer" aria-hidden="true" />
+            <ArrowsRightLeftIcon className='h-3 w-3 cursor-pointer' aria-hidden='true' />
           </button>
         </div>
       }

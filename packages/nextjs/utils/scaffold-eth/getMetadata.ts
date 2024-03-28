@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 export const getMetadata = ({
   title,
   description,
-  imageRelativePath = "/thumbnail.jpg",
+  imageRelativePath = '/thumbnail.jpg'
 }: {
   title: string;
   description: string;
@@ -21,14 +21,14 @@ export const getMetadata = ({
       description: description,
       images: [
         {
-          url: imageUrl,
-        },
-      ],
+          url: imageUrl
+        }
+      ]
     },
     twitter: {
       title: title,
       description: description,
-      images: [imageUrl],
-    },
+      images: [imageUrl]
+    }
   };
 };
