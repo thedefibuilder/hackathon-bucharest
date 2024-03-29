@@ -1,25 +1,12 @@
 /* eslint-disable unicorn/switch-case-braces */
+import { generateCover } from '~~/agents/cover-image';
 import { descriptionAgent } from '~~/agents/description';
+import { generateLogo } from '~~/agents/logo-image';
 import { roadmapAgent } from '~~/agents/roadmap';
 import { tokenInputAgent, tokenInputSchema } from '~~/agents/token-input';
-import { Message, StreamingTextResponse } from 'ai';
+import { ESteps, TChatInput } from '~~/types/api';
+import { StreamingTextResponse } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
-
-import { generateCover } from '../cover/route';
-import { generateLogo } from '../logo/route';
-
-export enum ESteps {
-  DESCRIPTION,
-  ROADMAP,
-  LOGO,
-  COVER,
-  TOKEN_INPUTS
-}
-
-export type TChatInput = {
-  messages: Message[];
-  step: ESteps;
-};
 
 export async function POST(request: NextRequest) {
   const { messages, step } = (await request.json()) as TChatInput;

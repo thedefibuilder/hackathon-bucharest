@@ -1,9 +1,6 @@
 import { tokenInputAgent, tokenInputSchema } from '~~/agents/token-input';
+import { TTokenInput } from '~~/types/api';
 import { NextRequest, NextResponse } from 'next/server';
-
-export type TTokenInput = {
-  description: string;
-};
 
 export async function POST(request: NextRequest) {
   const { description } = (await request.json()) as TTokenInput;
