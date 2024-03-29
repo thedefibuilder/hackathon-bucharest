@@ -14,6 +14,7 @@ import { socialsSchema, TSocialsSchema } from '~~/schemas/socials';
 import { tokenomicsSchema, TTokenomicsSchema } from '~~/schemas/tokenomics';
 import { useForm } from 'react-hook-form';
 import { Abi, Hex } from 'viem';
+import { useAccount, useChainId } from 'wagmi';
 
 import AiTab from './_components/tabs/ai';
 import IdentityTab from './_components/tabs/identity';
@@ -22,6 +23,8 @@ import SocialsForm from './_components/tabs/socials';
 import TokenomicsTab from './_components/tabs/tokenomics';
 
 export default function Erc20Page() {
+  const activeChainId = useChainId();
+  const { address } = useAccount();
   const [activeTab, setActiveTab] = useState<TTab>(erc20Tabs.ai);
 
   //#region IDENTITY
@@ -101,10 +104,6 @@ export default function Erc20Page() {
       premintAmount,
       true
     ]);
-
-    identityForm.reset();
-    tokenomicsForm.reset();
-    socialsForm.reset();
   }
 
   const { toast } = useToast();
@@ -121,17 +120,83 @@ export default function Erc20Page() {
 
   useEffect(() => {
     if (!deployErc20Error && deployErc20Response) {
-      toast({
-        description: (
-          <SuccessToastContent>
-            <div>
-              <p>ERC20 Token Contract deployed successfully.</p>
-            </div>
-          </SuccessToastContent>
-        )
-      });
+      const { receipt } = deployErc20Response;
+      const { contractAddress } = receipt;
+
+      const { logoBase64, coverImageBase64, description, roadmap } = identityForm.getValues();
+      const { tokenName, tokenSymbol, maxSupply, premintAmount } = tokenomicsForm.getValues();
+      const { website, twitter, telegram, discord } = socialsForm.getValues();
+
+      fetch('/api/tokens', {
+        method: 'POST',
+        body: JSON.stringify({
+          walletAddress: address,
+          deployment: {
+            chainId: activeChainId,
+            contractAddress,
+            template: 'TOKEN'
+          },
+          token: {
+            name: tokenName,
+            symbol: tokenSymbol,
+            maxSupply,
+            premintAmount,
+            burnable: true,
+            logo: logoBase64,
+            cover: coverImageBase64,
+            description,
+            roadmap,
+            socialLinks: {
+              website,
+              twitter,
+              telegram,
+              discord
+            }
+          }
+        })
+      })
+        .then((response) => {
+          console.log('SAVE TOKEN TO DB RESPONSE', response);
+
+          if (!response.ok) {
+            toast({
+              variant: 'destructive',
+              title: 'Error saving Token details',
+              description: 'Something went wrong saving Token details, please try again.'
+            });
+
+            return;
+          }
+
+          setActiveTab(erc20Tabs.ai);
+          identityForm.reset();
+          tokenomicsForm.reset();
+          socialsForm.reset();
+
+          toast({
+            description: (
+              <SuccessToastContent>
+                <div>
+                  <p>ERC20 Token Contract deployed successfully.</p>
+                </div>
+              </SuccessToastContent>
+            )
+          });
+
+          return null;
+        })
+        .catch((error: unknown) => console.error('ERROR SAVING TOKEN TO DB', error));
     }
-  }, [deployErc20Error, deployErc20Response, toast]);
+  }, [
+    activeChainId,
+    address,
+    identityForm,
+    tokenomicsForm,
+    socialsForm,
+    deployErc20Error,
+    deployErc20Response,
+    toast
+  ]);
 
   return (
     <div className='flex h-[calc(100%-2.5rem)] w-full flex-col'>

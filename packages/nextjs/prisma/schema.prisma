@@ -9,7 +9,55 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id            String @id @default(cuid())
+  walletAddress String
+
+  deployments Deployment[]
+}
+
+enum Template {
+  TOKEN
+  AIRSTREAM
+  PRESALE
+}
+
+model Deployment {
+  id              String   @id @default(cuid())
+  chainId         Int
+  contractAddress String
+  template        Template @default(TOKEN)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  token Token?
+}
+
+model Token {
+  id            String  @id @default(cuid())
+  name          String
+  symbol        String
+  maxSupply     Int
+  premintAmount Int
+  burnable      Boolean
+  logo          Bytes
+  cover         Bytes
+  description   String
+  roadmap       String
+
+  deployment   Deployment @relation(fields: [deploymentId], references: [id])
+  deploymentId String     @unique
+
+  socialLinks SocialLinks?
+}
+
+model SocialLinks {
+  id       String @id @default(cuid())
+  website  String
+  twitter  String
+  telegram String
+  discord  String
+
+  token   Token  @relation(fields: [tokenId], references: [id])
+  tokenId String @unique
 }
