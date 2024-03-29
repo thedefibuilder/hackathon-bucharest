@@ -6,12 +6,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Tabs, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import { preSaleTabs, TPreSaleTab } from '~~/lib/tabs';
 import { offeringSchema, TOfferingSchema } from '~~/schemas/offering';
+import { requirementsSchema, TRequirementsSchema } from '~~/schemas/requirements';
+import { addDays } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 import { useForm } from 'react-hook-form';
 
 import OfferingTab from './_components/tabs/offering';
+import RequirementsTab from './_components/tabs/requirements';
 
 export default function PresalePage() {
   const [activeTab, setActiveTab] = useState<TPreSaleTab>(preSaleTabs.offering);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 7)
+  });
 
   function onContinueClick(tab: TPreSaleTab) {
     setActiveTab(tab);
@@ -24,6 +32,14 @@ export default function PresalePage() {
       payment: '',
       allocationSupply: '0',
       price: '0'
+    }
+  });
+
+  const requirementsForm = useForm<TRequirementsSchema>({
+    resolver: zodResolver(requirementsSchema),
+    defaultValues: {
+      minParticipationAmount: '',
+      maxParticipationAmount: ''
     }
   });
 
@@ -45,6 +61,13 @@ export default function PresalePage() {
         </TabsList>
 
         <OfferingTab form={offeringForm} onContinueClick={onContinueClick} />
+
+        <RequirementsTab
+          form={requirementsForm}
+          onContinueClick={onContinueClick}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+        />
 
         {/* <ReviewTab
           identityValues={identityForm.watch()}

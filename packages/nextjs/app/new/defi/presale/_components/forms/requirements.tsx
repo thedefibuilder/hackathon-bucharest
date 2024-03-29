@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Button } from '~~/components/ui/button';
+import { DatePickerWithRange } from '~~/components/ui/date-range-picker';
 import {
   Form,
   FormControl,
@@ -11,20 +12,28 @@ import {
 } from '~~/components/ui/form';
 import { Input } from '~~/components/ui/input';
 import { preSaleTabs, TPreSaleTab } from '~~/lib/tabs';
-import { TOfferingSchema } from '~~/schemas/offering';
+import { TRequirementsSchema } from '~~/schemas/requirements';
+import { DateRange } from 'react-day-picker';
 import { UseFormReturn } from 'react-hook-form';
 
-type TOfferingForm = {
-  form: UseFormReturn<TOfferingSchema, any, undefined>;
+type TRequirementsForm = {
+  form: UseFormReturn<TRequirementsSchema, any, undefined>;
   onContinueClick(tab: TPreSaleTab): void;
+  dateRange: DateRange | undefined;
+  setDateRange: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
 };
 
-export default function OfferingForm({ form, onContinueClick }: TOfferingForm) {
+export default function RequirementsForm({
+  form,
+  onContinueClick,
+  dateRange,
+  setDateRange
+}: TRequirementsForm) {
   // eslint-disable-next-line unicorn/consistent-function-scoping
-  function onSubmit(values: TOfferingSchema) {
+  function onSubmit(values: TRequirementsSchema) {
     console.log(values);
-
-    onContinueClick(preSaleTabs.requirements);
+    if (dateRange) form.setValue('dateRange', { from: dateRange.from!, to: dateRange.to! });
+    onContinueClick(preSaleTabs.vesting);
   }
 
   return (
@@ -36,16 +45,31 @@ export default function OfferingForm({ form, onContinueClick }: TOfferingForm) {
         <div className='flex w-full flex-col space-y-8'>
           <FormField
             control={form.control}
-            name='token'
+            name='minParticipationAmount'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Offering Token</FormLabel>
+                  <FormLabel>Min Participation Amount</FormLabel>
+                  <FormMessage className='leading-none' />
+                </div>
+                <FormControl>
+                  <Input placeholder='100' className='resize-none placeholder:italic' {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='maxParticipationAmount'
+            render={({ field }) => (
+              <FormItem>
+                <div className='flex items-center gap-x-1'>
+                  <FormLabel>Max Participation Amount</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
                   <Input
-                    placeholder='e.g. 0x3922745E89F607703957549acD09CE1A578d8d74'
+                    placeholder='100 000 000'
                     className='resize-none placeholder:italic'
                     {...field}
                   />
@@ -53,58 +77,25 @@ export default function OfferingForm({ form, onContinueClick }: TOfferingForm) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name='payment'
+            name='dateRange'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Payment Token</FormLabel>
+                  <FormLabel>Pre-Sale Period</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
-                  <Input
-                    placeholder='e.g. 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
-                    className='resize-none placeholder:italic'
+                  <DatePickerWithRange
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
                     {...field}
                   />
                 </FormControl>
               </FormItem>
             )}
-          />
-
-          <FormField
-            control={form.control}
-            name='allocationSupply'
-            render={({ field }) => (
-              <FormItem>
-                <div className='flex items-center gap-x-1'>
-                  <FormLabel>Presale Supply</FormLabel>
-                  <FormMessage className='leading-none' />
-                </div>
-                <FormControl>
-                  <Input placeholder='e.g. 1.000.000' className='placeholder:italic' {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='price'
-            render={({ field }) => (
-              <FormItem>
-                <div className='flex items-center gap-x-1'>
-                  <FormLabel>Presale Supply</FormLabel>
-                  <FormMessage className='leading-none' />
-                </div>
-                <FormControl>
-                  <Input placeholder='e.g. 0.1' className='placeholder:italic' {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          />{' '}
         </div>
 
         <Button type='submit'>Continue</Button>
