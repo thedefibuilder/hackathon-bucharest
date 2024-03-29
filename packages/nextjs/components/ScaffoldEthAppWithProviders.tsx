@@ -32,7 +32,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className='flex min-h-screen flex-col'>
         <Nav />
-        <main className='relative flex h-full w-full flex-1 flex-col'>{children}</main>
+        <main className='relative flex h-full w-full flex-1 flex-col p-5'>{children}</main>
         <Footer />
       </div>
       <Toaster />

@@ -7,7 +7,7 @@ type TContractsSidebar = ComponentProps<'aside'>;
 export default function Sidebar({ className, children, ...otherProperties }: TContractsSidebar) {
   return (
     <aside
-      className={cn('flex flex-col rounded-md border-2 border-lime-400 p-2.5', className)}
+      className={cn('border-border flex h-fit flex-col rounded-md border p-2.5', className)}
       {...otherProperties}
     >
       {children}
