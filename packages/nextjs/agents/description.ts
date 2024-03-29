@@ -25,7 +25,8 @@ export function descriptionAgent() {
     openAIApiKey: env.OPENAI_API_KEY,
     modelName: 'gpt-4-turbo-preview',
     temperature: 0.5,
-    modelKwargs: { seed: 1337 }
+    modelKwargs: { seed: 1337 },
+    streaming: true
   });
 
   return prompt.pipe(llm).pipe(new StringOutputParser());
