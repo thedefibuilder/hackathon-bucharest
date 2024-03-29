@@ -5,10 +5,12 @@ import '@rainbow-me/rainbowkit/styles.css';
 import React from 'react';
 
 import { ScaffoldEthAppWithProviders } from '~~/components/ScaffoldEthAppWithProviders';
-import { ThemeProvider } from '~~/components/ThemeProvider';
 import { Metadata } from 'next';
 
 import '~~/styles/globals.css';
+
+import ThemeProvider from '~~/components/theme-provider';
+import { Toaster } from '~~/components/ui/toast/toaster';
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -52,8 +54,12 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang='en' suppressHydrationWarning>
       <body>
-        <ThemeProvider enableSystem>
-          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+        <ThemeProvider>
+          <ScaffoldEthAppWithProviders>
+            {children}
+
+            <Toaster />
+          </ScaffoldEthAppWithProviders>
         </ThemeProvider>
       </body>
     </html>
