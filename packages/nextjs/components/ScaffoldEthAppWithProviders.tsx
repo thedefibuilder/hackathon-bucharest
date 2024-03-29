@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 
 import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { Footer } from '~~/components/Footer';
-import { Header } from '~~/components/Header';
 import { BlockieAvatar } from '~~/components/scaffold-eth';
 import { ProgressBar } from '~~/components/scaffold-eth/ProgressBar';
 import { useNativeCurrencyPrice } from '~~/hooks/scaffold-eth';
@@ -17,7 +16,7 @@ import { useTheme } from 'next-themes';
 import { Toaster } from 'react-hot-toast';
 import { WagmiConfig } from 'wagmi';
 
-import SecondaryNav from './secondary-nav';
+import Nav from './nav';
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   const price = useNativeCurrencyPrice();
@@ -32,8 +31,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <div className='flex min-h-screen flex-col'>
-        <Header />
-        <SecondaryNav />
+        <Nav />
         <main className='relative flex h-full w-full flex-1 flex-col'>{children}</main>
         <Footer />
       </div>

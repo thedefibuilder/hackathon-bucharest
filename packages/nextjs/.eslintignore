@@ -1,6 +1,7 @@
 # folders
 .next
 node_modules/
+services
 app/blockexplorer
 app/debug
 components/scaffold-eth
