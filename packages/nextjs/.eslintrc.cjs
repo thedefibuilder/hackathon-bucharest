@@ -32,7 +32,8 @@ module.exports = {
     // end
 
     // unicorn
-    'unicorn/no-null': 'off'
+    'unicorn/no-null': 'off',
+    'unicorn/prevent-abbreviations': 'off'
     // end
   }
 };
