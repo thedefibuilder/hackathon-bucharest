@@ -1,7 +1,14 @@
+import { roadmapAgent } from '~~/agents/roadmap';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
-  const body = await request.json();
+export type TRoadmapInput = {
+  description: string;
+};
 
-  return NextResponse.json(body);
+export async function POST(request: NextRequest) {
+  const { description } = await request.json();
+
+  const roadmap = await roadmapAgent().invoke({ description });
+
+  return NextResponse.json({ roadmap }, { status: 200 });
 }

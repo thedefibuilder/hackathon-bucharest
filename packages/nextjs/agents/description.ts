@@ -7,19 +7,18 @@ import {
 import { ChatOpenAI } from '@langchain/openai';
 import { env } from '~~/env';
 
-export function roadmapAgent() {
-  const userMessage = 'Description: {description}';
-
-  const systemMessage =
-    'Your task is to assist users in providing the roadmap for their crypto token project given a description.' +
-    'The roadmap should be the max 1000 characters length.';
+export function descriptionAgent() {
+  const systemMsg =
+    'Your task is to assist users in providing the description for their crypto token project given a prompt.' +
+    'The description should be max 1000 characters length.';
+  const userMsg = 'Prompt: {prompt}';
 
   const prompt = new ChatPromptTemplate({
     promptMessages: [
-      SystemMessagePromptTemplate.fromTemplate(systemMessage),
-      HumanMessagePromptTemplate.fromTemplate(userMessage)
+      SystemMessagePromptTemplate.fromTemplate(systemMsg),
+      HumanMessagePromptTemplate.fromTemplate(userMsg)
     ],
-    inputVariables: ['description']
+    inputVariables: ['prompt']
   });
 
   const llm = new ChatOpenAI({

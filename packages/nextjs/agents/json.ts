@@ -1,14 +1,13 @@
 import type { ZodSchema } from 'zod';
 
 import { ChatOpenAI } from '@langchain/openai';
+import { env } from '~~/env';
 import { JsonOutputFunctionsParser } from 'langchain/output_parsers';
 import zodToJsonSchema from 'zod-to-json-schema';
 
-import { env } from '../env';
-
 export function jsonAgent(modelName: string, schema: ZodSchema) {
   const llm = new ChatOpenAI({
-    openAIApiKey: env.server.OPENAI_API_KEY,
+    openAIApiKey: env.OPENAI_API_KEY,
     modelName,
     temperature: 0.2,
     modelKwargs: { seed: 1337 }
