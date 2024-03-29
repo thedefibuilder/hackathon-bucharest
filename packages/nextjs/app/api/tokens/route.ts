@@ -46,6 +46,14 @@ export async function POST(request: NextRequest) {
   const { chainId, contractAddress, template } = deployment;
 
   try {
+    const user = await db.user.findFirst({
+      where: {
+        walletAddress: {
+          equals: walletAddress
+        }
+      }
+    });
+
     if (token) {
       const {
         name,
@@ -60,55 +68,104 @@ export async function POST(request: NextRequest) {
         socialLinks
       } = token;
 
-      await db.user.create({
-        data: {
-          walletAddress,
-          deployments: {
-            create: {
-              chainId,
-              contractAddress,
-              template,
-              token: {
-                create: {
-                  name,
-                  symbol,
-                  maxSupply: Number(maxSupply),
-                  premintAmount: Number(premintAmount),
-                  burnable,
-                  logo: logo as unknown as Buffer,
-                  cover: cover as unknown as Buffer,
-                  description,
-                  roadmap,
-                  socialLinks: {
-                    create: {
-                      website: socialLinks?.website ?? notAnounced,
-                      twitter: socialLinks?.twitter ?? notAnounced,
-                      telegram: socialLinks?.telegram ?? notAnounced,
-                      discord: socialLinks?.discord ?? notAnounced
+      if (!user) {
+        await db.user.create({
+          data: {
+            walletAddress,
+            deployments: {
+              create: {
+                chainId,
+                contractAddress,
+                template,
+                token: {
+                  create: {
+                    name,
+                    symbol,
+                    maxSupply: Number(maxSupply),
+                    premintAmount: Number(premintAmount),
+                    burnable,
+                    logo: logo.split(',')[1] as unknown as Buffer,
+                    cover: cover.split(',')[1] as unknown as Buffer,
+                    description,
+                    roadmap,
+                    socialLinks: {
+                      create: {
+                        website: socialLinks?.website ?? notAnounced,
+                        twitter: socialLinks?.twitter ?? notAnounced,
+                        telegram: socialLinks?.telegram ?? notAnounced,
+                        discord: socialLinks?.discord ?? notAnounced
+                      }
                     }
                   }
                 }
               }
             }
           }
-        }
-      });
-    } else {
-      await db.user.create({
+        });
+
+        return NextResponse.json({ status: 201 });
+      }
+
+      await db.deployment.create({
         data: {
-          walletAddress,
-          deployments: {
+          chainId,
+          contractAddress,
+          template,
+          userId: user.id,
+          token: {
             create: {
-              chainId,
-              contractAddress,
-              template
+              name,
+              symbol,
+              maxSupply: Number(maxSupply),
+              premintAmount: Number(premintAmount),
+              burnable,
+              logo: logo.split(',')[1] as unknown as Buffer,
+              cover: cover.split(',')[1] as unknown as Buffer,
+              description,
+              roadmap,
+              socialLinks: {
+                create: {
+                  website: socialLinks?.website ?? notAnounced,
+                  twitter: socialLinks?.twitter ?? notAnounced,
+                  telegram: socialLinks?.telegram ?? notAnounced,
+                  discord: socialLinks?.discord ?? notAnounced
+                }
+              }
             }
           }
         }
       });
-    }
 
-    return NextResponse.json({ status: 200 });
+      return NextResponse.json({ status: 201 });
+    } else {
+      if (!user) {
+        await db.user.create({
+          data: {
+            walletAddress,
+            deployments: {
+              create: {
+                chainId,
+                contractAddress,
+                template
+              }
+            }
+          }
+        });
+
+        return NextResponse.json({ status: 201 });
+      }
+
+      await db.deployment.create({
+        data: {
+          chainId,
+          contractAddress,
+          template,
+          userId: user.id
+        }
+      });
+
+      return NextResponse.json({ status: 201 });
+    }
   } catch (error: unknown) {
     console.error('ERROR INSERTING TOKEN INTO DB', error);
     return NextResponse.json({ status: 400 });
