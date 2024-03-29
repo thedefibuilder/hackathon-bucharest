@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { TWalletError } from '~~/lib/errors-mapper';
-import type { Abi, Address, PublicClient, TransactionReceipt, WalletClient } from 'viem';
+import type { Abi, Address, Hex, PublicClient, TransactionReceipt, WalletClient } from 'viem';
 
 import { mapWalletErrorsToMessage } from '~~/lib/errors-mapper';
 import { createPublicClient, createWalletClient, custom, http } from 'viem';
@@ -46,7 +46,7 @@ export default function useDeployContract() {
   }, [activeChain]);
 
   const deployContract = useCallback(
-    async (abi: Abi, bytecode: `0x${string}`, arguments_: unknown[]) => {
+    async (abi: Abi, bytecode: Hex, arguments_: unknown[]) => {
       if (!publicClient || !walletClient) {
         setIsLoading(false);
         setError({
