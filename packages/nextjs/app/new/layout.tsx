@@ -31,8 +31,8 @@ export default function NewLayout({ children }: TNewLayout) {
   const checkActivePath = useActivePath();
 
   return (
-    <div className='flex'>
-      <Sidebar>
+    <div className='flex flex-1 gap-x-5'>
+      <Sidebar className='w-52 gap-y-5'>
         {Object.entries(paths).map((entry) => (
           <div key={entry[0]} className='flex flex-col gap-y-1.5'>
             <p className='font-semibold'>{entry[0]}</p>
@@ -41,7 +41,8 @@ export default function NewLayout({ children }: TNewLayout) {
               <StyledLink
                 key={path.name}
                 href={path.href}
-                className={`btn ${checkActivePath(path.href) ? 'btn-secondary' : 'btn-primary'}`}
+                variant={checkActivePath(path.href) ? 'default' : 'secondary'}
+                className='ml-1.5'
               >
                 {path.name}
               </StyledLink>
@@ -50,7 +51,7 @@ export default function NewLayout({ children }: TNewLayout) {
         ))}
       </Sidebar>
 
-      <section>{children}</section>
+      <section className='w-full'>{children}</section>
     </div>
   );
 }

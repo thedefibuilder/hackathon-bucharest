@@ -22,7 +22,7 @@ const { onlyLocalBurnerWallet } = scaffoldConfig;
 // We always want to have mainnet enabled (ENS resolution, ETH price, etc). But only once.
 const enabledChains = targetNetworks.find((network) => network.id === 1)
   ? targetNetworks
-  : [...targetNetworks, chains.mainnet];
+  : [...targetNetworks, chains.mainnet, chains.arbitrumSepolia, chains.baseSepolia];
 
 /**
  * Chains for the app
