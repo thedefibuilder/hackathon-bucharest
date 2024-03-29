@@ -7,8 +7,7 @@ export type TLogoInput = {
   description: string;
 };
 
-export async function POST(request: NextRequest) {
-  const { description } = (await request.json()) as TLogoInput;
+export async function generateLogo(description: string) {
   const prompt = await logoImageAgent().invoke({ description });
 
   const visionResponse = await fetch(
@@ -43,9 +42,15 @@ export async function POST(request: NextRequest) {
     });
   });
 
+  return 'data:image/jpeg;base64,' + base64String;
+}
+
+export async function POST(request: NextRequest) {
+  const { description } = (await request.json()) as TLogoInput;
+
   return NextResponse.json(
     {
-      imageBase64: 'data:image/jpeg;base64,' + base64String
+      imageBase64: await generateLogo(description)
     },
     { status: 200 }
   );

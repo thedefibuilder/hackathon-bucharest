@@ -1,14 +1,13 @@
 import { roadmapAgent } from '~~/agents/roadmap';
-import { NextRequest, NextResponse } from 'next/server';
+import { StreamingTextResponse } from 'ai';
+import { NextRequest } from 'next/server';
 
 export type TRoadmapInput = {
   description: string;
 };
 
 export async function POST(request: NextRequest) {
-  const { description } = await request.json();
-
-  const roadmap = await roadmapAgent().invoke({ description });
-
-  return NextResponse.json({ roadmap }, { status: 200 });
+  const { description } = (await request.json()) as TRoadmapInput;
+  const roadmap = await roadmapAgent().stream({ description });
+  return new StreamingTextResponse(roadmap);
 }

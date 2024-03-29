@@ -25,7 +25,8 @@ export function tokenInputAgent() {
   const userMessage = 'Description: {description}';
   const systemMessage =
     'Your task is to assist users in providing the parameters for deploying a token contract given some description.' +
-    'The output should always follow the provided JSON format schema';
+    'The output should always follow the provided JSON format schema' +
+    'For the amounts, always multiply by 10^18 to convert to wei.';
 
   const prompt = new ChatPromptTemplate({
     promptMessages: [

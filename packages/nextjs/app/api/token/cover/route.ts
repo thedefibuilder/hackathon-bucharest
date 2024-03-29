@@ -7,9 +7,7 @@ export type TCoverInput = {
   description: string;
 };
 
-export async function POST(request: NextRequest) {
-  const { description } = (await request.json()) as TCoverInput;
-
+export async function generateCover(description: string) {
   const prompt = await coverImageAgent().invoke({ description });
   const visionResponse = await fetch(
     'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0',
@@ -42,9 +40,15 @@ export async function POST(request: NextRequest) {
     });
   });
 
+  return 'data:image/jpeg;base64,' + base64String;
+}
+
+export async function POST(request: NextRequest) {
+  const { description } = (await request.json()) as TCoverInput;
+
   return NextResponse.json(
     {
-      imageBase64: 'data:image/jpeg;base64,' + base64String
+      imageBase64: await generateCover(description)
     },
     { status: 200 }
   );

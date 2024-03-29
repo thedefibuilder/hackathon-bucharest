@@ -1,14 +1,16 @@
 import { descriptionAgent } from '~~/agents/description';
-import { NextRequest, NextResponse } from 'next/server';
+import { Message, StreamingTextResponse } from 'ai';
+import { NextRequest } from 'next/server';
 
 export type TDescriptionInput = {
-  prompt: string;
+  messages: Message[];
 };
 
 export async function POST(request: NextRequest) {
-  const { prompt } = (await request.json()) as TDescriptionInput;
+  const { messages } = (await request.json()) as TDescriptionInput;
+  const prompt = messages.at(-1)?.content;
 
-  const description = await descriptionAgent().invoke({ prompt });
+  const description = await descriptionAgent().stream({ prompt });
 
-  return NextResponse.json({ description }, { status: 200 });
+  return new StreamingTextResponse(description);
 }
