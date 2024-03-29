@@ -13,7 +13,7 @@ import { identitySchema, TIdentitySchema } from '~~/schemas/identity';
 import { socialsSchema, TSocialsSchema } from '~~/schemas/socials';
 import { tokenomicsSchema, TTokenomicsSchema } from '~~/schemas/tokenomics';
 import { useForm } from 'react-hook-form';
-import { Abi, Hex } from 'viem';
+import { Abi, Hex, parseEther } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
 import AiTab from './_components/tabs/ai';
@@ -96,12 +96,14 @@ export default function Erc20Page() {
 
   async function onErc20ContractDeploy() {
     const { tokenName, tokenSymbol, maxSupply, premintAmount } = tokenomicsForm.getValues();
+    const parsedMaxSupply = parseEther(maxSupply);
+    const premintAmountParsed = parseEther(premintAmount);
 
     await deployErc20Contract(tokenArtifact.abi as Abi, tokenArtifact.bytecode as Hex, [
       tokenName,
       tokenSymbol,
-      maxSupply,
-      premintAmount,
+      parsedMaxSupply,
+      premintAmountParsed,
       true
     ]);
   }

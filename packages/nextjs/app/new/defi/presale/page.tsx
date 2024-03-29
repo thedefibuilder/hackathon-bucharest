@@ -12,11 +12,9 @@ import { preSaleTabs, TPreSaleTab } from '~~/lib/tabs';
 import { offeringSchema, TOfferingSchema } from '~~/schemas/offering';
 import { requirementsSchema, TRequirementsSchema } from '~~/schemas/requirements';
 import { TVestingSchema, vestingSchema } from '~~/schemas/vesting';
-import { addDays } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useForm } from 'react-hook-form';
 import { Abi, Hex, parseEther } from 'viem';
-import { useChainId } from 'wagmi';
 
 import OfferingTab from './_components/tabs/offering';
 import PresaleReviewTab from './_components/tabs/presale-review';
@@ -25,10 +23,7 @@ import VestingTab from './_components/tabs/vesting';
 
 export default function PresalePage() {
   const [activeTab, setActiveTab] = useState<TPreSaleTab>(preSaleTabs.offering);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7)
-  });
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   function onContinueClick(tab: TPreSaleTab) {
     setActiveTab(tab);
@@ -82,8 +77,8 @@ export default function PresalePage() {
       price: parseEther(price),
       minParticipationAmount,
       maxParticipationAmount,
-      startTime: 0,
-      endTime: Date.now()
+      startTime: startTime.getTime() / 1000,
+      endTime: endTime.getTime() / 1000
     };
 
     const chainName =
@@ -108,7 +103,7 @@ export default function PresalePage() {
       offeringConfig.supply
     );
 
-    if (!deployPresaleError) {
+    if (deployPresaleResponse) {
       offeringForm.reset();
       requirementsForm.reset();
       vestingForm.reset();

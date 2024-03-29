@@ -5,7 +5,7 @@ import type { Abi, Address, Hex, PublicClient, TransactionReceipt, WalletClient 
 
 import erc20Artifact from '~~/assets/artifacts/ERC20.json';
 import { mapWalletErrorsToMessage } from '~~/lib/errors-mapper';
-import { createPublicClient, createWalletClient, custom, getContractAddress, http } from 'viem';
+import { createPublicClient, createWalletClient, custom, http } from 'viem';
 import { useChainId, useSwitchNetwork } from 'wagmi';
 
 type TWriteContractResponse = {
@@ -74,20 +74,23 @@ export default function useDeployContract() {
         const walletAddresses = await walletClient.getAddresses();
         const walletAddress = walletAddresses.at(0) as Address;
 
+        // @ts-ignore
+        const hash = await walletClient.deployContract({
+          abi,
+          bytecode,
+          args: arguments_,
+          account: walletAddress
+        });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        const contractAddress = receipt.contractAddress ?? '';
+
         if (preApprove) {
-          const nonce = await publicClient.getTransactionCount({ address: walletAddress });
-          console.log(nonce);
-          const predictedAddress = getContractAddress({
-            from: walletAddress,
-            nonce: BigInt(nonce)
-          });
-          console.log('ASDASD');
           const { request, result } = await publicClient.simulateContract({
             chain: activeChain,
             abi: erc20Artifact.abi as Abi,
             address: approveToken as Address,
-            functionName: 'approve',
-            args: [predictedAddress, approveAmount],
+            functionName: 'transfer',
+            args: [contractAddress, approveAmount],
             account: walletClient.account ?? walletAddress
           });
 
@@ -98,15 +101,6 @@ export default function useDeployContract() {
           const txHash = await walletClient.writeContract(request);
           await publicClient.waitForTransactionReceipt({ hash: txHash });
         }
-
-        // @ts-ignore
-        const hash = await walletClient.deployContract({
-          abi,
-          bytecode,
-          args: arguments_,
-          account: walletAddress
-        });
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
         setIsLoading(false);
         setError(null);

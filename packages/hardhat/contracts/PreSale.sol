@@ -91,8 +91,6 @@ contract PreSale is Ownable {
 		cliffDuration = vestingConfig.cliffDuration;
 		vestingDuration = vestingConfig.vestingDuration;
 
-		// pre-approve from deployer required
-		offeringToken.transferFrom(msg.sender, address(this), offeringSupply);
 		offeringToken.approve(address(sablierLockupLinear), offeringSupply);
 		offeringToken.approve(address(sablierBatch), offeringSupply);
 	}
