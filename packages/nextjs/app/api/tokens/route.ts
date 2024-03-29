@@ -171,3 +171,45 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: 400 });
   }
 }
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const walletAddress = searchParams.get('wallet-address');
+
+  if (!walletAddress) {
+    return NextResponse.json({ errorMessage: 'Please provide Wallet Address.' }, { status: 400 });
+  }
+
+  console.log('WA', walletAddress);
+
+  const user = await db.user.findFirst({
+    where: {
+      walletAddress: {
+        equals: walletAddress
+      }
+    }
+  });
+
+  if (!user) {
+    return NextResponse.json(
+      { errorMessage: 'User not found, first you need to deploy an ERC20 Token.' },
+      { status: 404 }
+    );
+  }
+  console.log('user', user);
+
+  const deployments = await db.deployment.findMany({
+    where: {
+      userId: {
+        equals: user.id
+      }
+    },
+    include: {
+      token: true
+    }
+  });
+
+  console.log('deployments', deployments);
+
+  return NextResponse.json({ ...deployments }, { status: 200 });
+}
