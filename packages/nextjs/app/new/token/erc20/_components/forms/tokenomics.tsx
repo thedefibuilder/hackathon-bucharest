@@ -11,13 +11,13 @@ import {
   FormMessage
 } from '~~/components/ui/form';
 import { Input } from '~~/components/ui/input';
-import { erc20Tabs, TTab } from '~~/lib/tabs';
+import { erc20Tabs, TERC20Tab } from '~~/lib/tabs';
 import { TTokenomicsSchema } from '~~/schemas/tokenomics';
 import { UseFormReturn } from 'react-hook-form';
 
 type TTokenomicsForm = {
   form: UseFormReturn<TTokenomicsSchema, any, undefined>;
-  onContinueClick(tab: TTab): void;
+  onContinueClick(tab: TERC20Tab): void;
 };
 
 export default function TokenomicsForm({ form, onContinueClick }: TTokenomicsForm) {

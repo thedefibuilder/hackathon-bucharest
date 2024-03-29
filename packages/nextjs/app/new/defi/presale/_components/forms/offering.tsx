@@ -10,21 +10,22 @@ import {
   FormMessage
 } from '~~/components/ui/form';
 import { Input } from '~~/components/ui/input';
-import { erc20Tabs, TERC20Tab } from '~~/lib/tabs';
-import { TSocialsSchema } from '~~/schemas/socials';
+import { Textarea } from '~~/components/ui/textarea';
+import { preSaleTabs, TPreSaleTab } from '~~/lib/tabs';
+import { TOfferingSchema } from '~~/schemas/offering';
 import { UseFormReturn } from 'react-hook-form';
 
-type TSocialsForm = {
-  form: UseFormReturn<TSocialsSchema, any, undefined>;
-  onContinueClick(tab: TERC20Tab): void;
+type TOfferingForm = {
+  form: UseFormReturn<TOfferingSchema, any, undefined>;
+  onContinueClick(tab: TPreSaleTab): void;
 };
 
-export default function SocialsForm({ form, onContinueClick }: TSocialsForm) {
+export default function OfferingForm({ form, onContinueClick }: TOfferingForm) {
   // eslint-disable-next-line unicorn/consistent-function-scoping
-  function onSubmit(values: TSocialsSchema) {
+  function onSubmit(values: TOfferingSchema) {
     console.log(values);
 
-    onContinueClick(erc20Tabs.review);
+    onContinueClick(preSaleTabs.requirements);
   }
 
   return (
@@ -36,17 +37,18 @@ export default function SocialsForm({ form, onContinueClick }: TSocialsForm) {
         <div className='flex w-full flex-col space-y-8'>
           <FormField
             control={form.control}
-            name='website'
+            name='token'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Website</FormLabel>
+                  <FormLabel>Offering Token</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
-                  <Input
-                    placeholder='e.g. https://defibuilder.com'
-                    className='placeholder:italic'
+                  <Textarea
+                    rows={1}
+                    placeholder='e.g. 0x3922745E89F607703957549acD09CE1A578d8d74'
+                    className='resize-none placeholder:italic'
                     {...field}
                   />
                 </FormControl>
@@ -56,17 +58,18 @@ export default function SocialsForm({ form, onContinueClick }: TSocialsForm) {
 
           <FormField
             control={form.control}
-            name='twitter'
+            name='payment'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Twitter</FormLabel>
+                  <FormLabel>Payment Token</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
-                  <Input
-                    placeholder='e.g. https://twitter.com/defibuilder'
-                    className='placeholder:italic'
+                  <Textarea
+                    rows={1}
+                    placeholder='e.g. 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+                    className='resize-none placeholder:italic'
                     {...field}
                   />
                 </FormControl>
@@ -76,19 +79,15 @@ export default function SocialsForm({ form, onContinueClick }: TSocialsForm) {
 
           <FormField
             control={form.control}
-            name='telegram'
+            name='allocationSupply'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Telegram</FormLabel>
+                  <FormLabel>Presale Supply</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
-                  <Input
-                    placeholder='e.g. https://t.me/defibuilder'
-                    className='placeholder:italic'
-                    {...field}
-                  />
+                  <Input placeholder='e.g. 1.000.000' className='placeholder:italic' {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -96,19 +95,15 @@ export default function SocialsForm({ form, onContinueClick }: TSocialsForm) {
 
           <FormField
             control={form.control}
-            name='discord'
+            name='price'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Discord</FormLabel>
+                  <FormLabel>Presale Supply</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
-                  <Input
-                    placeholder='e.g. https://discord.com/invite/defibuilder'
-                    className='placeholder:italic'
-                    {...field}
-                  />
+                  <Input placeholder='e.g. 0.1' className='placeholder:italic' {...field} />
                 </FormControl>
               </FormItem>
             )}
