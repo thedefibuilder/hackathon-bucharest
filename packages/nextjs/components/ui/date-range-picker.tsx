@@ -4,9 +4,11 @@
 import * as React from 'react';
 
 import { cn } from '~~/lib/utils';
+import { TRequirementsSchema } from '~~/schemas/requirements';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
+import { UseFormReturn } from 'react-hook-form';
 
 import { Button } from './button';
 import { Calendar } from './calendar';
@@ -16,14 +18,21 @@ type DateRangePickerProps = {
   className?: string;
   dateRange: DateRange | undefined;
   setDateRange: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
+  form: UseFormReturn<TRequirementsSchema, any, undefined>;
 };
 
-export function DatePickerWithRange({ className, dateRange, setDateRange }: DateRangePickerProps) {
+export function DatePickerWithRange({
+  className,
+  dateRange,
+  setDateRange,
+  form
+}: DateRangePickerProps) {
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
+            type='button'
             id='date'
             variant={'outline'}
             className={cn(
@@ -51,7 +60,11 @@ export function DatePickerWithRange({ className, dateRange, setDateRange }: Date
             mode='range'
             defaultMonth={dateRange?.from}
             selected={dateRange}
-            onSelect={setDateRange}
+            onSelect={(value) => {
+              setDateRange(value);
+              if (value && value.from) form.setValue('startTime', value.from);
+              if (value && value.to) form.setValue('endTime', value.to);
+            }}
             numberOfMonths={2}
           />
         </PopoverContent>

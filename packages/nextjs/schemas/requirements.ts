@@ -12,13 +12,10 @@ export const requirementsSchema = z.object({
     .trim()
     .refine((value) => !Number.isNaN(Number(value)), { message: 'must be a number' })
     .refine((value) => Number(value) > 0, { message: 'must be positive' }),
-
-  dateRange: z
-    .object({
-      from: z.date(),
-      to: z.date()
-    })
-    .optional()
+  startTime: z.date({ required_error: 'is required' }),
+  endTime: z.date({ required_error: 'is required' }).refine((value) => value > new Date(), {
+    message: 'must be in the future'
+  })
 });
 
 export type TRequirementsSchema = z.infer<typeof requirementsSchema>;

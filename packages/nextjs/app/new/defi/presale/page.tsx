@@ -13,6 +13,7 @@ import { DateRange } from 'react-day-picker';
 import { useForm } from 'react-hook-form';
 
 import OfferingTab from './_components/tabs/offering';
+import PresaleReviewTab from './_components/tabs/presale-review';
 import RequirementsTab from './_components/tabs/requirements';
 import VestingTab from './_components/tabs/vesting';
 
@@ -81,13 +82,13 @@ export default function PresalePage() {
 
         <VestingTab form={vestingForm} onContinueClick={onContinueClick} />
 
-        {/* <ReviewTab
-          identityValues={identityForm.watch()}
-          tokenomicsValues={tokenomicsForm.watch()}
-          socialsValues={socialsForm.watch()}
-          isDeployingErc20={isDeployingErc20}
-          onErc20ContractDeploy={onErc20ContractDeploy}
-        /> */}
+        <PresaleReviewTab
+          offeringValues={offeringForm.watch()}
+          requirementsValues={requirementsForm.watch()}
+          vestingValues={vestingForm.watch()}
+          isDeployingPresale={false} // todo
+          onPresaleDeploy={async () => {}} // todo
+        />
       </Tabs>
     </div>
   );

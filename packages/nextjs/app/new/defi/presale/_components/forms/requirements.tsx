@@ -32,7 +32,6 @@ export default function RequirementsForm({
   // eslint-disable-next-line unicorn/consistent-function-scoping
   function onSubmit(values: TRequirementsSchema) {
     console.log(values);
-    if (dateRange) form.setValue('dateRange', { from: dateRange.from!, to: dateRange.to! });
     onContinueClick(preSaleTabs.vesting);
   }
 
@@ -79,7 +78,7 @@ export default function RequirementsForm({
           />
           <FormField
             control={form.control}
-            name='dateRange'
+            name='startTime'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
@@ -90,12 +89,12 @@ export default function RequirementsForm({
                   <DatePickerWithRange
                     dateRange={dateRange}
                     setDateRange={setDateRange}
-                    {...field}
+                    form={form}
                   />
                 </FormControl>
               </FormItem>
             )}
-          />{' '}
+          />
         </div>
 
         <Button type='submit'>Continue</Button>

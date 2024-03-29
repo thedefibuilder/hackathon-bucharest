@@ -96,7 +96,7 @@ export default function OfferingForm({ form, onContinueClick }: TOfferingForm) {
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Presale Supply</FormLabel>
+                  <FormLabel>Price Offering</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
