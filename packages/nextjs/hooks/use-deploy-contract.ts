@@ -3,8 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { TWalletError } from '~~/lib/errors-mapper';
 import type { Abi, Address, Hex, PublicClient, TransactionReceipt, WalletClient } from 'viem';
 
+import erc20Artifact from '~~/assets/artifacts/ERC20.json';
 import { mapWalletErrorsToMessage } from '~~/lib/errors-mapper';
-import { createPublicClient, createWalletClient, custom, http } from 'viem';
+import { createPublicClient, createWalletClient, custom, getContractAddress, http } from 'viem';
 import { useChainId, useSwitchNetwork } from 'wagmi';
 
 type TWriteContractResponse = {
@@ -46,7 +47,14 @@ export default function useDeployContract() {
   }, [activeChain]);
 
   const deployContract = useCallback(
-    async (abi: Abi, bytecode: Hex, arguments_: unknown[]) => {
+    async (
+      abi: Abi,
+      bytecode: Hex,
+      arguments_: unknown[],
+      preApprove?: boolean,
+      approveToken?: Address,
+      approveAmount?: bigint
+    ) => {
       if (!publicClient || !walletClient) {
         setIsLoading(false);
         setError({
@@ -65,6 +73,31 @@ export default function useDeployContract() {
 
         const walletAddresses = await walletClient.getAddresses();
         const walletAddress = walletAddresses.at(0) as Address;
+
+        if (preApprove) {
+          const nonce = await publicClient.getTransactionCount({ address: walletAddress });
+          console.log(nonce);
+          const predictedAddress = getContractAddress({
+            from: walletAddress,
+            nonce: BigInt(nonce)
+          });
+          console.log('ASDASD');
+          const { request, result } = await publicClient.simulateContract({
+            chain: activeChain,
+            abi: erc20Artifact.abi as Abi,
+            address: approveToken as Address,
+            functionName: 'approve',
+            args: [predictedAddress, approveAmount],
+            account: walletClient.account ?? walletAddress
+          });
+
+          if (!result) {
+            throw new Error('Failed to pre-approve contract');
+          }
+
+          const txHash = await walletClient.writeContract(request);
+          await publicClient.waitForTransactionReceipt({ hash: txHash });
+        }
 
         // @ts-ignore
         const hash = await walletClient.deployContract({
@@ -89,10 +122,11 @@ export default function useDeployContract() {
         console.error('ERROR DEPLOYING CONTRACT', error);
       }
     },
-    [publicClient, walletClient]
+    [publicClient, walletClient, activeChain]
   );
 
   return {
+    publicClient,
     isLoading,
     error,
     response,

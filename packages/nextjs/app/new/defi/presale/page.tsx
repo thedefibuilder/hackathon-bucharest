@@ -4,6 +4,10 @@ import React, { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Tabs, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
+import presaleArtifact from '~~/assets/artifacts/presale.json';
+import { useToast } from '~~/components/ui/toast/use-toast';
+import externalContracts from '~~/contracts/externalContracts';
+import useDeployContract from '~~/hooks/use-deploy-contract';
 import { preSaleTabs, TPreSaleTab } from '~~/lib/tabs';
 import { offeringSchema, TOfferingSchema } from '~~/schemas/offering';
 import { requirementsSchema, TRequirementsSchema } from '~~/schemas/requirements';
@@ -11,6 +15,8 @@ import { TVestingSchema, vestingSchema } from '~~/schemas/vesting';
 import { addDays } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useForm } from 'react-hook-form';
+import { Abi, Hex, parseEther } from 'viem';
+import { useChainId } from 'wagmi';
 
 import OfferingTab from './_components/tabs/offering';
 import PresaleReviewTab from './_components/tabs/presale-review';
@@ -54,6 +60,61 @@ export default function PresalePage() {
     }
   });
 
+  const { toast } = useToast();
+  const {
+    publicClient,
+    isLoading: isDeployingPresale,
+    error: deployPresaleError,
+    response: deployPresaleResponse,
+    deployContract: deployPresaleContract
+  } = useDeployContract();
+
+  async function onPresaleContractDeploy() {
+    const { token, payment, allocationSupply, price } = offeringForm.getValues();
+    const { minParticipationAmount, maxParticipationAmount, startTime, endTime } =
+      requirementsForm.getValues();
+    const { cliffDuration, vestingDuration } = vestingForm.getValues();
+
+    const offeringConfig = {
+      token,
+      paymentToken: payment,
+      supply: parseEther(allocationSupply),
+      price: parseEther(price),
+      minParticipationAmount,
+      maxParticipationAmount,
+      startTime: 0,
+      endTime: Date.now()
+    };
+
+    const chainName =
+      publicClient?.chain?.name === 'Arbitrum Sepolia' ? 'Arbitrum Sepolia' : 'Base Sepolia';
+
+    const vestingConfig = {
+      sablierLockupLinear: externalContracts[chainName].sablierLockupLinear.address,
+      sablierBatch: externalContracts[chainName].sablierBatch.address,
+      cliffDuration,
+      vestingDuration
+    };
+
+    console.log('offeringConfig', offeringConfig);
+    console.log('vestingConfig', vestingConfig);
+
+    await deployPresaleContract(
+      presaleArtifact.abi as Abi,
+      presaleArtifact.bytecode as Hex,
+      [offeringConfig, vestingConfig],
+      true,
+      offeringConfig.token,
+      offeringConfig.supply
+    );
+
+    if (!deployPresaleError) {
+      offeringForm.reset();
+      requirementsForm.reset();
+      vestingForm.reset();
+    }
+  }
+
   return (
     <div className='flex h-[calc(100%-2.5rem)] w-full flex-col'>
       <Tabs defaultValue={activeTab} value={activeTab} className='h-full w-full'>
@@ -86,8 +147,8 @@ export default function PresalePage() {
           offeringValues={offeringForm.watch()}
           requirementsValues={requirementsForm.watch()}
           vestingValues={vestingForm.watch()}
-          isDeployingPresale={false} // todo
-          onPresaleDeploy={async () => {}} // todo
+          isDeployingPresale={isDeployingPresale}
+          onPresaleDeploy={onPresaleContractDeploy}
         />
       </Tabs>
     </div>
