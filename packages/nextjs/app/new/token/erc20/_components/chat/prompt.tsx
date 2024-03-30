@@ -10,13 +10,13 @@ import AutoSizingTextarea from '~~/components/autosizing-textarea';
 import StyledLink from '~~/components/styled-link';
 import { Button } from '~~/components/ui/button';
 import { useEnterSubmit } from '~~/hooks/use-enter-submit';
-import { erc20Tabs, TTab } from '~~/lib/tabs';
+import { erc20Tabs, TERC20Tab } from '~~/lib/tabs';
 import { cn } from '~~/lib/utils';
 import { CornerDownLeft, Plus } from 'lucide-react';
 
 type TChatPrompt = ComponentProps<'div'> &
   Pick<UseChatHelpers, 'input' | 'isLoading' | 'messages' | 'setInput' | 'handleSubmit'> & {
-    onContinueClick: (tab: TTab) => void;
+    onContinueClick: (tab: TERC20Tab) => void;
     onNewChat: () => void;
   };
 

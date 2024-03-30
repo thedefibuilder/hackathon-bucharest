@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react';
 
 import { TabsContent } from '@radix-ui/react-tabs';
-import { erc20Tabs, TTab } from '~~/lib/tabs';
+import { erc20Tabs, TERC20Tab } from '~~/lib/tabs';
 import { UseChatHelpers } from 'ai/react';
 
 import MessagesList from '../chat-messages/list';
@@ -12,7 +12,7 @@ type TAiTab = Pick<
   'input' | 'messages' | 'isLoading' | 'setInput' | 'handleSubmit' | 'reload' | 'stop'
 > & {
   onNewChat: () => void;
-  onContinueClick: (tab: TTab) => void;
+  onContinueClick: (tab: TERC20Tab) => void;
 };
 
 export default function AiTab({
@@ -29,7 +29,7 @@ export default function AiTab({
   return (
     <TabsContent
       value={erc20Tabs.ai}
-      className='border-border h-full overflow-hidden rounded-md border'
+      className='h-full overflow-hidden rounded-md border border-border'
     >
       <div className='flex h-full w-full flex-col items-center overflow-y-auto'>
         <MessagesList messages={messages} isLoading={isLoading} reload={reload} stop={stop} />

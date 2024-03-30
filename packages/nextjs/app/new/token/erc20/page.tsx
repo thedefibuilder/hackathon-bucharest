@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from '~~/components/ui/tabs';
 import { useToast } from '~~/components/ui/toast/use-toast';
 import useDeployContract from '~~/hooks/use-deploy-contract';
 import fetchImageFromIpfs from '~~/lib/fetch-image';
-import { erc20Tabs, TTab } from '~~/lib/tabs';
+import { erc20Tabs, TERC20Tab } from '~~/lib/tabs';
 import { identitySchema, TIdentitySchema } from '~~/schemas/identity';
 import { socialsSchema, TSocialsSchema } from '~~/schemas/socials';
 import { tokenomicsSchema, TTokenomicsSchema } from '~~/schemas/tokenomics';
@@ -30,7 +30,7 @@ export default function Erc20Page() {
   const { address } = useAccount();
   
   const [chatStep, setChatStep] = useState(0);
-  const [activeTab, setActiveTab] = useState<TTab>(erc20Tabs.ai);
+  const [activeTab, setActiveTab] = useState<TERC20Tab>(erc20Tabs.ai);
 
   const [isSavingIntoDb, setIsSavingIntoDb] = useState(false);
 
