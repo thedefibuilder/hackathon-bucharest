@@ -2,6 +2,7 @@ import React from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '~~/components/ui/button';
+import { Checkbox } from '~~/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -99,6 +100,22 @@ export default function TokenomicsForm({ form, onContinueClick }: TTokenomicsFor
                 <FormControl>
                   <Input placeholder='e.g. 100.000' className='placeholder:italic' {...field} />
                 </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='isBurnable'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0'>
+                <FormControl>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+                <div className='flex items-center gap-x-1'>
+                  <FormLabel>Burnable</FormLabel>
+                  <FormMessage className='leading-none' />
+                </div>
               </FormItem>
             )}
           />

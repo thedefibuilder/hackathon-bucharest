@@ -28,7 +28,7 @@ import TokenomicsTab from './_components/tabs/tokenomics';
 export default function Erc20Page() {
   const activeChainId = useChainId();
   const { address } = useAccount();
-  
+
   const [chatStep, setChatStep] = useState(0);
   const [activeTab, setActiveTab] = useState<TERC20Tab>(erc20Tabs.ai);
 
@@ -78,7 +78,8 @@ export default function Erc20Page() {
       tokenName: '',
       tokenSymbol: '',
       maxSupply: '',
-      premintAmount: ''
+      premintAmount: '',
+      isBurnable: false
     }
   });
 
@@ -179,6 +180,7 @@ export default function Erc20Page() {
             tokenomicsForm.setValue('tokenSymbol', tokenInputs.symbol);
             tokenomicsForm.setValue('maxSupply', tokenInputs.maxSupply);
             tokenomicsForm.setValue('premintAmount', tokenInputs.premintAmount);
+            tokenomicsForm.setValue('isBurnable', tokenInputs.isBurnable);
           }
 
           break;
@@ -197,7 +199,8 @@ export default function Erc20Page() {
   } = useDeployContract();
 
   async function onErc20ContractDeploy() {
-    const { tokenName, tokenSymbol, maxSupply, premintAmount } = tokenomicsForm.getValues();
+    const { tokenName, tokenSymbol, maxSupply, premintAmount, isBurnable } =
+      tokenomicsForm.getValues();
     const parsedMaxSupply = parseEther(maxSupply);
     const premintAmountParsed = parseEther(premintAmount);
 
@@ -206,7 +209,7 @@ export default function Erc20Page() {
       tokenSymbol,
       parsedMaxSupply,
       premintAmountParsed,
-      true
+      isBurnable
     ]);
   }
 
