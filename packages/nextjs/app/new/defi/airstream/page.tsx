@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Tabs, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import StyledLink from '~~/components/styled-link';
 import SuccessToastContent from '~~/components/success-toast-content';
+import { Tabs, TabsList, TabsTrigger } from '~~/components/ui/tabs';
 import { useToast } from '~~/components/ui/toast/use-toast';
 import externalContracts from '~~/contracts/externalContracts';
 import useWriteContract from '~~/hooks/use-write-contract';
