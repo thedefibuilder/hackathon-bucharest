@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Tabs, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
+import StyledLink from '~~/components/styled-link';
 import SuccessToastContent from '~~/components/success-toast-content';
 import { useToast } from '~~/components/ui/toast/use-toast';
 import externalContracts from '~~/contracts/externalContracts';
@@ -12,7 +13,7 @@ import { airstreamTabs, TAirstreamTab } from '~~/lib/tabs';
 import { tokenSchema, TTokenSchema } from '~~/schemas/token';
 import { TSablierStreamOutput } from '~~/types/api';
 import { useForm } from 'react-hook-form';
-import { useAccount } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 
 import StreamReviewTab from './_components/tabs/stream-review';
 import TokenTab from './_components/tabs/token';
@@ -22,7 +23,7 @@ export default function AirstreamPage() {
   const [streamResponse, setStreamResponse] = useState<TSablierStreamOutput | null>(null);
   const { toast } = useToast();
   const account = useAccount();
-
+  const { chain } = usePublicClient();
   const tokenForm = useForm<TTokenSchema>({
     resolver: zodResolver(tokenSchema),
     defaultValues: {
@@ -129,6 +130,13 @@ export default function AirstreamPage() {
           <SuccessToastContent>
             <div>
               <p>Stream deployed successfully.</p>
+              <StyledLink
+                variant='link'
+                href={`${chain.blockExplorers?.default.url}/address/${mekrleStreamResponse.receipt.contractAddress}`}
+                target='_blank'
+              >
+                View on {chain.blockExplorers?.default.name}
+              </StyledLink>
             </div>
           </SuccessToastContent>
         )
