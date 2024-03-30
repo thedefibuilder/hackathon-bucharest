@@ -23,7 +23,8 @@ export const tokenomicsSchema = z.object({
     .string({ required_error: 'is required' })
     .trim()
     .refine((value) => !Number.isNaN(Number(value)), { message: 'must be a number' })
-    .refine((value) => Number(value) >= 1, { message: 'must be grater than 0' })
+    .refine((value) => Number(value) >= 0, { message: 'must be grater than 0' })
+    .default('0')
 });
 
 export type TTokenomicsSchema = z.infer<typeof tokenomicsSchema>;

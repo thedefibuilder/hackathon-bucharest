@@ -28,7 +28,7 @@ import TokenomicsTab from './_components/tabs/tokenomics';
 export default function Erc20Page() {
   const activeChainId = useChainId();
   const { address } = useAccount();
-  
+
   const [chatStep, setChatStep] = useState(0);
   const [activeTab, setActiveTab] = useState<TERC20Tab>(erc20Tabs.ai);
 
