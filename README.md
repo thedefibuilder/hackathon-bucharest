@@ -1,80 +1,40 @@
-# 🏗 Scaffold-ETH 2
+Logo Link
+https://drive.google.com/file/d/145rIR2FVsQiNouAYmpmjzGV_WBxQJ8Pz/view?usp=sharing
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+Vision
+DeFi Builder empowers aspiring Web3 entrepreneurs to get their idea to market faster than ever through the power of AI and no-code solutions.
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+Buidl Description
+DeFi Builder is a Web3 development service suite, combining the power of Artificial Intelligence and advanced no-code development tools, in order to allow Web3 entrepreneurs to deploy tokens and DeFi applications with no coding knowledge required.
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+For ETH Bucharest, we have concentrated our focus on offering a token builder and fundraising platform, powered by AI support, that could help any project with the first step of their Web3 journey, fundraising. This is done through in-house smart contracts that have been internally tested, a trained AI model that offers support to the user with the token ideation process, an intuitive step-by-step presale builder, and an Airstream creator, enabling project developers to create vested airdrops, that are safer for the chart health of their token. Lastly we are offering ENS services to our users, allowing them to easily create a custom domain for their presale page.
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+# Features
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+🪙 **Token Builder**: DeFi Builder allows anyone to easily customize a token and deploy it with no coding knowledge required. Any user can also take advantage of our AI model in order to receive advice in their token ideation, and graphics creation process for their token.
 
-## Requirements
+🛒 **Presale Builder**: Users can easily create a hardcap presale through DeFi Builder, customizing various aspects of their fundraiser, such as token of choice, supply, raise amount and vesting periods. Users creating a presale through DeFi Builder will also receive a private Presale page they can use to perform their raise, with customized information about their project.
 
-Before you begin, you need to install the following tools:
+🌧️ **Airstream**: Our airstream feature allows users to easily avoid one of the largest issues with airdrops in Web3, instant dumps. Through airstreams our users can select a vesting period for the release of their tokens destined for an airdrop. This is supported through our platform, thanks to the help of Sablier.
 
-- [Node (>= v18.17)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+# Utility
 
-## Quickstart
+🛠️ **Token Builder**: Our token builder is meant to simplify the token creation process for any EVM chain users. This is done through audited and severely tested smart contracts, and a thoroughly tested AI model. Our AI model is trained to offer the best suggestions for tokenomics and logic strategization, based on our currently available libraries for the builder.
 
-To get started with Scaffold-ETH 2, follow the steps below:
+🧾 **Presale Builder**: Our presale builder strives to simplify fundraising for all users, offering them an easy to use option, with a custom page for their project, and no fee on our end for a successfully performed raise by them.
 
-1. Clone this repo & install dependencies
+📋 **Airstream**: Our Airstream features allows users to fight one of the most common issues about token airdrops, which is instant dumps and price volatility. This is done through cleverly organized vesting schedules, that gradually release the airdropped amount to users, in order to avoid any sudden dumps.
 
-```
-git clone https://github.com/scaffold-eth/scaffold-eth-2.git
-cd scaffold-eth-2
-yarn install
-```
+# Tech Stack
 
-2. Run a local network in the first terminal:
+⛓️ **BuidlGuidl Integration**: Leveraging Scaffold ETH, we ensure seamless smart contract development and deployment.
 
-```
-yarn chain
-```
+👨🏼‍💻 **Hardhat Support**: Through Hardhat we perform smart contract testing, debugging, and deployment.
 
-This command starts a local Ethereum network using Hardhat. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `hardhat.config.ts`.
+💻 **Next.js Full-stack**: Next.js is used as our React framework for server-side rendering and client-side routing.
 
-3. On a second terminal, deploy the test contract:
+🤖 **AI Integration (Hugging Face & OpenAI)**: DeFi Builder integrates cutting-edge AI technologies from Hugging Face and OpenAI to enhance user experience and streamline decision-making processes for our token builder.
 
-```
-yarn deploy
-```
+**Tracks**: Arbitrum, Base, BuidlGuidl, ENS, Sablier
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/hardhat/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/hardhat/deploy` to deploy the contract to the network. You can also customize the deploy script.
-
-4. On a third terminal, start your NextJS app:
-
-```
-yarn start
-```
-
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
-
-Run smart contract test with `yarn hardhat:test`
-
-- Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
-- Edit your frontend in `packages/nextjs/pages`
-- Edit your deployment scripts in `packages/hardhat/deploy`
-
-## Documentation
-
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
-
-To know more about its features, check out our [website](https://scaffoldeth.io).
-
-## Contributing to Scaffold-ETH 2
-
-We welcome contributions to Scaffold-ETH 2!
-
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+**To be Noted**: We have participated in hackathons (including Dorahacks ones) as DeFi Builder, since we are building various utilities under the same brand that will be tied together further down the line, but the features present in this submission have been ideated and developed during the ETH Bucharest Hackathon.
