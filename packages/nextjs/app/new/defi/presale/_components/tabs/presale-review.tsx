@@ -30,7 +30,7 @@ export default function PresaleReviewTab({
   return (
     <TabsContent
       value={preSaleTabs.review}
-      className='border-border h-full overflow-hidden rounded-md border'
+      className='h-full overflow-hidden rounded-md border border-border'
     >
       <div className='flex h-full w-full flex-col items-end gap-y-5 overflow-y-auto p-5'>
         <div className='flex w-full flex-col gap-y-3'>
@@ -71,11 +71,11 @@ function PresaleReviewSection({ title, keyValuePair }: TPresaleReviewSection) {
 
           return (
             <li key={key} className='flex flex-col gap-y-1.5'>
-              <span className='text-muted-foreground font-semibold capitalize'>
+              <span className='font-semibold capitalize text-muted-foreground'>
                 {separateCamelCase(key ?? '')}:{' '}
               </span>
 
-              <span>{value.toString() ?? ''}</span>
+              <span>{value ? value.toString() : 'N / A'}</span>
             </li>
           );
         })}

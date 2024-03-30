@@ -73,7 +73,7 @@ export default function VestingForm({ form, onContinueClick }: TVestingForm) {
             control={form.control}
             name='cliffDuration'
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='w-full'>
                 <div className='flex items-center gap-x-1'>
                   <FormLabel>Cliff Duration</FormLabel>
                   <FormMessage className='leading-none' />
@@ -88,7 +88,7 @@ export default function VestingForm({ form, onContinueClick }: TVestingForm) {
                         type='button'
                         key={`${duration.value}-${index}`}
                         variant={cliffDurationInDays === duration.value ? 'secondary' : 'outline'}
-                        className='px-2 py-1 text-xs'
+                        className='w-1/6 px-2 py-1 text-xs'
                         onClick={() => {
                           setCliffDurationInDays(duration.value);
                           form.setValue(
@@ -193,7 +193,7 @@ export default function VestingForm({ form, onContinueClick }: TVestingForm) {
                   </div>
                 </div>
 
-                <span className='text-muted-foreground text-sm'>
+                <span className='text-sm text-muted-foreground'>
                   The cliff would end on {format(cliffEndDatePrevision, "MMM d ''yy ~ h:mm a")}
                 </span>
               </FormItem>
@@ -210,7 +210,7 @@ export default function VestingForm({ form, onContinueClick }: TVestingForm) {
                   <FormMessage className='leading-none' />
                 </div>
 
-                <div className='flex flex-col gap-y-2.5'>
+                <div className='flex w-full flex-col gap-y-2.5'>
                   <span className='text-sm'>Suggested</span>
 
                   <div className='flex gap-x-1.5'>
@@ -219,7 +219,7 @@ export default function VestingForm({ form, onContinueClick }: TVestingForm) {
                         type='button'
                         key={`${duration.value}-${index}`}
                         variant={vestingDurationInDays === duration.value ? 'secondary' : 'outline'}
-                        className='px-2 py-1 text-xs'
+                        className='w-1/6 px-2 py-1 text-xs'
                         onClick={() => {
                           setVestingDurationInDays(duration.value);
                           form.setValue(
@@ -324,7 +324,7 @@ export default function VestingForm({ form, onContinueClick }: TVestingForm) {
                   </div>
                 </div>
 
-                <span className='text-muted-foreground text-sm'>
+                <span className='text-sm text-muted-foreground'>
                   The vesting would end on {format(vestingEndDatePrevision, "MMM d ''yy ~ h:mm a")}
                 </span>
               </FormItem>

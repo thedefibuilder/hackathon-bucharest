@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import tokenArtifact from '~~/assets/artifacts/token.json';
+import StyledLink from '~~/components/styled-link';
 import SuccessToastContent from '~~/components/success-toast-content';
 import { Tabs, TabsList, TabsTrigger } from '~~/components/ui/tabs';
 import { useToast } from '~~/components/ui/toast/use-toast';
@@ -17,7 +18,7 @@ import { ESteps } from '~~/types/api';
 import { useChat } from 'ai/react';
 import { useForm } from 'react-hook-form';
 import { Abi, Hex, parseEther } from 'viem';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount, useChainId, usePublicClient } from 'wagmi';
 
 import AiTab from './_components/tabs/ai';
 import IdentityTab from './_components/tabs/identity';
@@ -27,6 +28,7 @@ import TokenomicsTab from './_components/tabs/tokenomics';
 
 export default function Erc20Page() {
   const activeChainId = useChainId();
+  const { chain } = usePublicClient();
   const { address } = useAccount();
 
   const [chatStep, setChatStep] = useState(0);
@@ -78,7 +80,8 @@ export default function Erc20Page() {
       tokenName: '',
       tokenSymbol: '',
       maxSupply: '',
-      premintAmount: ''
+      premintAmount: '',
+      isBurnable: false
     }
   });
 
@@ -179,6 +182,7 @@ export default function Erc20Page() {
             tokenomicsForm.setValue('tokenSymbol', tokenInputs.symbol);
             tokenomicsForm.setValue('maxSupply', tokenInputs.maxSupply);
             tokenomicsForm.setValue('premintAmount', tokenInputs.premintAmount);
+            tokenomicsForm.setValue('isBurnable', tokenInputs.isBurnable);
           }
 
           break;
@@ -197,7 +201,8 @@ export default function Erc20Page() {
   } = useDeployContract();
 
   async function onErc20ContractDeploy() {
-    const { tokenName, tokenSymbol, maxSupply, premintAmount } = tokenomicsForm.getValues();
+    const { tokenName, tokenSymbol, maxSupply, premintAmount, isBurnable } =
+      tokenomicsForm.getValues();
     const parsedMaxSupply = parseEther(maxSupply);
     const premintAmountParsed = parseEther(premintAmount);
 
@@ -206,7 +211,7 @@ export default function Erc20Page() {
       tokenSymbol,
       parsedMaxSupply,
       premintAmountParsed,
-      true
+      isBurnable
     ]);
   }
 
@@ -285,6 +290,13 @@ export default function Erc20Page() {
               <SuccessToastContent>
                 <div>
                   <p>ERC20 Token Contract deployed successfully.</p>
+                  <StyledLink
+                    variant='link'
+                    href={`${chain.blockExplorers?.default.url}/address/${deployErc20Response.receipt.contractAddress}`}
+                    target='_blank'
+                  >
+                    View on {chain.blockExplorers?.default.name}
+                  </StyledLink>
                 </div>
               </SuccessToastContent>
             )
@@ -304,6 +316,7 @@ export default function Erc20Page() {
     socialsForm,
     deployErc20Error,
     deployErc20Response,
+    chain.blockExplorers,
     toast,
     setMessages
   ]);

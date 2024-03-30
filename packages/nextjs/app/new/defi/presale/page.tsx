@@ -1,11 +1,15 @@
+/* eslint-disable unicorn/no-nested-ternary */
+/* eslint-disable sonarjs/no-duplicate-string */
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Tabs, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import presaleArtifact from '~~/assets/artifacts/presale.json';
+import StyledLink from '~~/components/styled-link';
 import SuccessToastContent from '~~/components/success-toast-content';
+import { Tabs, TabsList, TabsTrigger } from '~~/components/ui/tabs';
 import { useToast } from '~~/components/ui/toast/use-toast';
 import externalContracts from '~~/contracts/externalContracts';
 import useDeployContract from '~~/hooks/use-deploy-contract';
@@ -16,15 +20,20 @@ import { TVestingSchema, vestingSchema } from '~~/schemas/vesting';
 import { DateRange } from 'react-day-picker';
 import { useForm } from 'react-hook-form';
 import { Abi, Hex, parseEther } from 'viem';
+import { usePublicClient } from 'wagmi';
 
 import OfferingTab from './_components/tabs/offering';
 import PresaleReviewTab from './_components/tabs/presale-review';
 import RequirementsTab from './_components/tabs/requirements';
 import VestingTab from './_components/tabs/vesting';
 
+const arbitrumUsdcAddress = '0x75faf114eafb1bdbe2f0316df893fd58ce46aa4d';
+
 export default function PresalePage() {
   const [activeTab, setActiveTab] = useState<TPreSaleTab>(preSaleTabs.offering);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+  const { chain } = usePublicClient();
 
   function onContinueClick(tab: TPreSaleTab) {
     setActiveTab(tab);
@@ -34,7 +43,7 @@ export default function PresalePage() {
     resolver: zodResolver(offeringSchema),
     defaultValues: {
       token: '',
-      payment: '',
+      payment: arbitrumUsdcAddress,
       allocationSupply: '0',
       price: '0'
     }
@@ -87,6 +96,23 @@ export default function PresalePage() {
       offeringForm.reset();
       requirementsForm.reset();
       vestingForm.reset();
+
+      toast({
+        description: (
+          <SuccessToastContent>
+            <div>
+              <p>ERC20 Token Contract deployed successfully.</p>
+              <StyledLink
+                variant='link'
+                href={`${chain.blockExplorers?.default.url}/address/${deployPresaleResponse.receipt.contractAddress}`}
+                target='_blank'
+              >
+                View on {chain.blockExplorers?.default.name}
+              </StyledLink>
+            </div>
+          </SuccessToastContent>
+        )
+      });
 
       toast({
         description: (
@@ -145,13 +171,7 @@ export default function PresalePage() {
       <Tabs defaultValue={activeTab} value={activeTab} className='h-full w-full'>
         <TabsList className='mb-2.5 w-full'>
           {Object.values(preSaleTabs).map((tab) => (
-            <TabsTrigger
-              key={tab}
-              value={tab}
-              className='w-1/5'
-              disabled={false}
-              onClick={() => setActiveTab(tab)}
-            >
+            <TabsTrigger key={tab} value={tab} className='w-1/4' onClick={() => setActiveTab(tab)}>
               {tab}
             </TabsTrigger>
           ))}
