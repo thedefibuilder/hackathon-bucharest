@@ -24,6 +24,7 @@ const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.24",
     settings: {
+      evmVersion: "paris",
       optimizer: {
         enabled: true,
         // https://docs.soliditylang.org/en/latest/using-the-compiler.html#optimizer-options

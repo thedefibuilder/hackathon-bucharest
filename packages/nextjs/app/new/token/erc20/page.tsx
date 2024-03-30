@@ -8,12 +8,12 @@ import SuccessToastContent from '~~/components/success-toast-content';
 import { Tabs, TabsList, TabsTrigger } from '~~/components/ui/tabs';
 import { useToast } from '~~/components/ui/toast/use-toast';
 import useDeployContract from '~~/hooks/use-deploy-contract';
-import { erc20Tabs, TTab } from '~~/lib/tabs';
+import { erc20Tabs, TERC20Tab } from '~~/lib/tabs';
 import { identitySchema, TIdentitySchema } from '~~/schemas/identity';
 import { socialsSchema, TSocialsSchema } from '~~/schemas/socials';
 import { tokenomicsSchema, TTokenomicsSchema } from '~~/schemas/tokenomics';
 import { useForm } from 'react-hook-form';
-import { Abi, Hex } from 'viem';
+import { Abi, Hex, parseEther } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
 import AiTab from './_components/tabs/ai';
@@ -25,7 +25,7 @@ import TokenomicsTab from './_components/tabs/tokenomics';
 export default function Erc20Page() {
   const activeChainId = useChainId();
   const { address } = useAccount();
-  const [activeTab, setActiveTab] = useState<TTab>(erc20Tabs.ai);
+  const [activeTab, setActiveTab] = useState<TERC20Tab>(erc20Tabs.ai);
 
   //#region IDENTITY
   const identityForm = useForm<TIdentitySchema>({
@@ -83,7 +83,7 @@ export default function Erc20Page() {
     }
   });
 
-  function onContinueClick(tab: TTab) {
+  function onContinueClick(tab: TERC20Tab) {
     setActiveTab(tab);
   }
 
@@ -96,12 +96,14 @@ export default function Erc20Page() {
 
   async function onErc20ContractDeploy() {
     const { tokenName, tokenSymbol, maxSupply, premintAmount } = tokenomicsForm.getValues();
+    const parsedMaxSupply = parseEther(maxSupply);
+    const premintAmountParsed = parseEther(premintAmount);
 
     await deployErc20Contract(tokenArtifact.abi as Abi, tokenArtifact.bytecode as Hex, [
       tokenName,
       tokenSymbol,
-      maxSupply,
-      premintAmount,
+      parsedMaxSupply,
+      premintAmountParsed,
       true
     ]);
   }
