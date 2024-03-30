@@ -52,7 +52,11 @@ export default function RequirementsForm({
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
-                  <Input placeholder='100' className='resize-none placeholder:italic' {...field} />
+                  <Input
+                    placeholder='e.g. 100'
+                    className='resize-none placeholder:italic'
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -68,7 +72,7 @@ export default function RequirementsForm({
                 </div>
                 <FormControl>
                   <Input
-                    placeholder='100 000 000'
+                    placeholder='e.g. 100 000 000'
                     className='resize-none placeholder:italic'
                     {...field}
                   />
@@ -80,7 +84,7 @@ export default function RequirementsForm({
             control={form.control}
             name='startTime'
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='w-full'>
                 <div className='flex items-center gap-x-1'>
                   <FormLabel>Pre-Sale Period</FormLabel>
                   <FormMessage className='leading-none' />
@@ -90,6 +94,7 @@ export default function RequirementsForm({
                     dateRange={dateRange}
                     setDateRange={setDateRange}
                     form={form}
+                    className='w-full'
                   />
                 </FormControl>
               </FormItem>

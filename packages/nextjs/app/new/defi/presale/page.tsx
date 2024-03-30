@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Tabs, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import presaleArtifact from '~~/assets/artifacts/presale.json';
 import SuccessToastContent from '~~/components/success-toast-content';
+import { Tabs, TabsList, TabsTrigger } from '~~/components/ui/tabs';
 import { useToast } from '~~/components/ui/toast/use-toast';
 import externalContracts from '~~/contracts/externalContracts';
 import useDeployContract from '~~/hooks/use-deploy-contract';
@@ -145,13 +145,7 @@ export default function PresalePage() {
       <Tabs defaultValue={activeTab} value={activeTab} className='h-full w-full'>
         <TabsList className='mb-2.5 w-full'>
           {Object.values(preSaleTabs).map((tab) => (
-            <TabsTrigger
-              key={tab}
-              value={tab}
-              className='w-1/5'
-              disabled={false}
-              onClick={() => setActiveTab(tab)}
-            >
+            <TabsTrigger key={tab} value={tab} className='w-1/4' onClick={() => setActiveTab(tab)}>
               {tab}
             </TabsTrigger>
           ))}
