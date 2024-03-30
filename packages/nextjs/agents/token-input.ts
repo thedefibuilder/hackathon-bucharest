@@ -11,11 +11,7 @@ export const tokenInputSchema = z.object({
   name: z.string().describe('The name of the token'),
   symbol: z.string().describe('The symbol of the token'),
   maxSupply: z.number().int().positive().describe('The maximum supply of the token'),
-  premintAmount: z
-    .number()
-    .int()
-    .nonnegative()
-    .describe('The amount of tokens to be pre-mined at deployment'),
+  premintAmount: z.number().int().describe('The amount of tokens to be pre-mined at deployment'),
   isBurnable: z
     .boolean()
     .describe('Whether the token is burnable, i.e. users will be able to burn their tokens')

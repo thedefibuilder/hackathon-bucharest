@@ -8,6 +8,14 @@ export enum ESteps {
   TOKEN_INPUTS
 }
 
+export type TSablierStreamOutput = {
+  cid: string;
+  recipients: string;
+  root: string;
+  status: string;
+  total: string;
+};
+
 export type TChatInput = {
   messages: Message[];
   step: ESteps;

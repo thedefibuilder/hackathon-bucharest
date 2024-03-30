@@ -34,7 +34,7 @@ export async function generateCover(description: string) {
   const blob = await visionResponse.blob();
   const buffer = Buffer.from(await blob.arrayBuffer());
   const image = await Jimp.read(buffer);
-  image.resize(1024, 576);
+  image.resize(1024, 1024);
 
   // Convert the image to a base64 string and crop the prefix
   const base64String = await new Promise<string>((resolve, reject) => {

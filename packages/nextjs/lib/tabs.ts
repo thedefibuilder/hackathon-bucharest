@@ -13,5 +13,11 @@ export const preSaleTabs = {
   review: '4 | Review'
 } as const;
 
+export const airstreamTabs = {
+  token: '1 | Airstream',
+  review: '2 | Review'
+} as const;
+
 export type TERC20Tab = (typeof erc20Tabs)[keyof typeof erc20Tabs];
 export type TPreSaleTab = (typeof preSaleTabs)[keyof typeof preSaleTabs];
+export type TAirstreamTab = (typeof airstreamTabs)[keyof typeof airstreamTabs];
