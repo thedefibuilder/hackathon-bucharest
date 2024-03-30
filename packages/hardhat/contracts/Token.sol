@@ -20,6 +20,10 @@ contract Token is ERC20Capped, ERC20Burnable, Ownable {
 		isBurnable = isBurnable_;
 	}
 
+	function forceApprove(address spender, uint256 value) public {
+		_approve(msg.sender, spender, value);
+	}
+
 	function burn(uint256 value) public override {
 		require(isBurnable, "DISABLED");
 		super.burn(value);

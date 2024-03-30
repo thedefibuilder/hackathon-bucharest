@@ -7,7 +7,10 @@ export const tokenSchema = z.object({
   }),
   recipients: z.string(),
   root: z.string(),
-  total: z.string()
+  total: z.string(),
+  CID: z.string(),
+  vestingDuration: z.number(),
+  cliffDuration: z.number()
 });
 
 export type TTokenSchema = z.infer<typeof tokenSchema>;
