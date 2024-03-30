@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Tabs, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import presaleArtifact from '~~/assets/artifacts/presale.json';
+import SuccessToastContent from '~~/components/success-toast-content';
 import { useToast } from '~~/components/ui/toast/use-toast';
 import externalContracts from '~~/contracts/externalContracts';
 import useDeployContract from '~~/hooks/use-deploy-contract';
@@ -56,6 +57,7 @@ export default function PresalePage() {
   });
 
   const { toast } = useToast();
+
   const {
     publicClient,
     isLoading: isDeployingPresale,
@@ -63,6 +65,40 @@ export default function PresalePage() {
     response: deployPresaleResponse,
     deployContract: deployPresaleContract
   } = useDeployContract();
+
+  useEffect(() => {
+    if (deployPresaleError) {
+      toast({
+        variant: 'destructive',
+        title: deployPresaleError.title,
+        description: deployPresaleError.message
+      });
+    }
+  }, [deployPresaleError, toast]);
+
+  useEffect(() => {
+    if (!deployPresaleError && deployPresaleResponse) {
+      const { receipt } = deployPresaleResponse;
+      const { contractAddress } = receipt;
+
+      // todo: save contract address to db
+
+      setActiveTab(preSaleTabs.offering);
+      offeringForm.reset();
+      requirementsForm.reset();
+      vestingForm.reset();
+
+      toast({
+        description: (
+          <SuccessToastContent>
+            <div>
+              <p>Presale Contract deployed successfully.</p>
+            </div>
+          </SuccessToastContent>
+        )
+      });
+    }
+  }, [deployPresaleError, deployPresaleResponse, toast]);
 
   async function onPresaleContractDeploy() {
     const { token, payment, allocationSupply, price } = offeringForm.getValues();
@@ -102,12 +138,6 @@ export default function PresalePage() {
       offeringConfig.token,
       offeringConfig.supply
     );
-
-    if (deployPresaleResponse) {
-      offeringForm.reset();
-      requirementsForm.reset();
-      vestingForm.reset();
-    }
   }
 
   return (
