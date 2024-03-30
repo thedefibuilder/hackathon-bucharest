@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import tokenArtifact from '~~/assets/artifacts/token.json';
@@ -8,10 +8,13 @@ import SuccessToastContent from '~~/components/success-toast-content';
 import { Tabs, TabsList, TabsTrigger } from '~~/components/ui/tabs';
 import { useToast } from '~~/components/ui/toast/use-toast';
 import useDeployContract from '~~/hooks/use-deploy-contract';
+import fetchImageFromIpfs from '~~/lib/fetch-image';
 import { erc20Tabs, TTab } from '~~/lib/tabs';
 import { identitySchema, TIdentitySchema } from '~~/schemas/identity';
 import { socialsSchema, TSocialsSchema } from '~~/schemas/socials';
 import { tokenomicsSchema, TTokenomicsSchema } from '~~/schemas/tokenomics';
+import { ESteps } from '~~/types/api';
+import { useChat } from 'ai/react';
 import { useForm } from 'react-hook-form';
 import { Abi, Hex } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
@@ -25,7 +28,13 @@ import TokenomicsTab from './_components/tabs/tokenomics';
 export default function Erc20Page() {
   const activeChainId = useChainId();
   const { address } = useAccount();
+
+  const [chatStep, setChatStep] = useState(0);
   const [activeTab, setActiveTab] = useState<TTab>(erc20Tabs.ai);
+
+  const [isSavingIntoDb, setIsSavingIntoDb] = useState(false);
+
+  const { toast } = useToast();
 
   //#region IDENTITY
   const identityForm = useForm<TIdentitySchema>({
@@ -87,6 +96,99 @@ export default function Erc20Page() {
     setActiveTab(tab);
   }
 
+  //#region AI
+  // prettier-ignore
+  const {
+    input,
+    messages,
+    isLoading,
+    setInput,
+    setMessages,
+    handleSubmit,
+    reload,
+    stop
+  } = useChat({
+    api: '/api/token/chat',
+    body: {
+      step: chatStep
+    }
+  });
+
+  const onNewChat = useCallback(() => {
+    setMessages([]);
+  }, [setMessages]);
+
+  useEffect(() => {
+    if (!isLoading && messages.length >= 2 && messages.length % 2 === 0) {
+      setChatStep((previousState) => previousState + 1);
+    }
+  }, [isLoading, messages]);
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  useEffect(() => {
+    console.log('chatStep', chatStep);
+
+    if (!isLoading) {
+      switch (chatStep) {
+        case ESteps.DESCRIPTION: {
+          if (messages.length >= 2) {
+            identityForm.setValue('description', messages[1].content);
+          }
+
+          break;
+        }
+        case ESteps.ROADMAP: {
+          if (messages.length >= 4) {
+            identityForm.setValue('roadmap', messages[3].content);
+          }
+
+          break;
+        }
+        case ESteps.LOGO: {
+          if (messages.length >= 6) {
+            fetchImageFromIpfs(messages[5].content)
+              .then((imageBase64) => {
+                identityForm.setValue('logoBase64', imageBase64 ?? '');
+
+                return null;
+              })
+              .catch((error) => console.error('ERROR FETCHING IMAGE', error));
+          }
+
+          break;
+        }
+        case ESteps.COVER: {
+          if (messages.length >= 8) {
+            fetchImageFromIpfs(messages[7].content)
+              .then((imageBase64) => {
+                identityForm.setValue('coverImageBase64', imageBase64 ?? '');
+
+                return null;
+              })
+              .catch((error) => console.error('ERROR FETCHING IMAGE', error));
+          }
+
+          break;
+        }
+        case ESteps.TOKEN_INPUTS: {
+          if (messages.length >= 10) {
+            const tokenInputs = JSON.parse(messages[9].content);
+            console.log('tokenInputs', tokenInputs);
+
+            tokenomicsForm.setValue('tokenName', tokenInputs.name);
+            tokenomicsForm.setValue('tokenSymbol', tokenInputs.symbol);
+            tokenomicsForm.setValue('maxSupply', tokenInputs.maxSupply);
+            tokenomicsForm.setValue('premintAmount', tokenInputs.premintAmount);
+          }
+
+          break;
+        }
+      }
+    }
+  }, [isLoading, messages, chatStep, identityForm, tokenomicsForm]);
+  //#endregion
+
+  //#region DEPLOY ERC20
   const {
     isLoading: isDeployingErc20,
     error: deployErc20Error,
@@ -106,8 +208,6 @@ export default function Erc20Page() {
     ]);
   }
 
-  const { toast } = useToast();
-
   useEffect(() => {
     if (deployErc20Error) {
       toast({
@@ -120,6 +220,8 @@ export default function Erc20Page() {
 
   useEffect(() => {
     if (!deployErc20Error && deployErc20Response) {
+      setIsSavingIntoDb(true);
+
       const { receipt } = deployErc20Response;
       const { contractAddress } = receipt;
 
@@ -164,10 +266,13 @@ export default function Erc20Page() {
               title: 'Error saving Token details',
               description: 'Something went wrong saving Token details, please try again.'
             });
+            setIsSavingIntoDb(false);
 
             return;
           }
 
+          setChatStep(0);
+          setMessages([]);
           setActiveTab(erc20Tabs.ai);
           identityForm.reset();
           tokenomicsForm.reset();
@@ -183,6 +288,8 @@ export default function Erc20Page() {
             )
           });
 
+          setIsSavingIntoDb(false);
+
           return null;
         })
         .catch((error: unknown) => console.error('ERROR SAVING TOKEN TO DB', error));
@@ -195,8 +302,10 @@ export default function Erc20Page() {
     socialsForm,
     deployErc20Error,
     deployErc20Response,
-    toast
+    toast,
+    setMessages
   ]);
+  //#endregion
 
   return (
     <div className='flex h-[calc(100%-2.5rem)] w-full flex-col'>
@@ -215,7 +324,17 @@ export default function Erc20Page() {
           ))}
         </TabsList>
 
-        <AiTab onContinueClick={onContinueClick} />
+        <AiTab
+          input={input}
+          messages={messages}
+          isLoading={isLoading}
+          setInput={setInput}
+          handleSubmit={handleSubmit}
+          onNewChat={onNewChat}
+          reload={reload}
+          stop={stop}
+          onContinueClick={onContinueClick}
+        />
         <IdentityTab
           form={identityForm}
           onContinueClick={onContinueClick}
@@ -228,7 +347,7 @@ export default function Erc20Page() {
           identityValues={identityForm.watch()}
           tokenomicsValues={tokenomicsForm.watch()}
           socialsValues={socialsForm.watch()}
-          isDeployingErc20={isDeployingErc20}
+          isDeployingErc20={isDeployingErc20 || isSavingIntoDb}
           onErc20ContractDeploy={onErc20ContractDeploy}
         />
       </Tabs>

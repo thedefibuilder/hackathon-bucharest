@@ -5,6 +5,7 @@ export const env = createEnv({
   server: {
     OPENAI_API_KEY: z.string(),
     HF_API_KEY: z.string(),
+    LIGHTHOUSE_API_KEY: z.string(),
     DATABASE_URL: z
       .string()
       .url()
@@ -29,7 +30,8 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     DATABASE_DIRECT_URL: process.env.DATABASE_DIRECT_URL,
     NODE_ENV: process.env.NODE_ENV,
-    HF_API_KEY: process.env.HF_API_KEY
+    HF_API_KEY: process.env.HF_API_KEY,
+    LIGHTHOUSE_API_KEY: process.env.LIGHTHOUSE_API_KEY
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true

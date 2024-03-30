@@ -14,7 +14,7 @@ export const tokenInputSchema = z.object({
   premintAmount: z
     .number()
     .int()
-    .positive()
+    .nonnegative()
     .describe('The amount of tokens to be pre-mined at deployment'),
   isBurnable: z
     .boolean()
