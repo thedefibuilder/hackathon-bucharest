@@ -101,7 +101,7 @@ export default function PresalePage() {
         description: (
           <SuccessToastContent>
             <div>
-              <p>ERC20 Token Contract deployed successfully.</p>
+              <p>Presale Contract deployed successfully.</p>
               <StyledLink
                 variant='link'
                 href={`${chain.blockExplorers?.default.url}/address/${deployPresaleResponse.receipt.contractAddress}`}
@@ -109,16 +109,6 @@ export default function PresalePage() {
               >
                 View on {chain.blockExplorers?.default.name}
               </StyledLink>
-            </div>
-          </SuccessToastContent>
-        )
-      });
-
-      toast({
-        description: (
-          <SuccessToastContent>
-            <div>
-              <p>Presale Contract deployed successfully.</p>
             </div>
           </SuccessToastContent>
         )
