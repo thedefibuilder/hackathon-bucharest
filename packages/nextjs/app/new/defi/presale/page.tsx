@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import presaleArtifact from '~~/assets/artifacts/presale.json';
+import StyledLink from '~~/components/styled-link';
 import SuccessToastContent from '~~/components/success-toast-content';
 import { Tabs, TabsList, TabsTrigger } from '~~/components/ui/tabs';
 import { useToast } from '~~/components/ui/toast/use-toast';
@@ -19,6 +20,7 @@ import { TVestingSchema, vestingSchema } from '~~/schemas/vesting';
 import { DateRange } from 'react-day-picker';
 import { useForm } from 'react-hook-form';
 import { Abi, Hex, parseEther } from 'viem';
+import { usePublicClient } from 'wagmi';
 
 import OfferingTab from './_components/tabs/offering';
 import PresaleReviewTab from './_components/tabs/presale-review';
@@ -30,6 +32,8 @@ const arbitrumUsdcAddress = '0x75faf114eafb1bdbe2f0316df893fd58ce46aa4d';
 export default function PresalePage() {
   const [activeTab, setActiveTab] = useState<TPreSaleTab>(preSaleTabs.offering);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+  const { chain } = usePublicClient();
 
   function onContinueClick(tab: TPreSaleTab) {
     setActiveTab(tab);
@@ -92,6 +96,23 @@ export default function PresalePage() {
       offeringForm.reset();
       requirementsForm.reset();
       vestingForm.reset();
+
+      toast({
+        description: (
+          <SuccessToastContent>
+            <div>
+              <p>ERC20 Token Contract deployed successfully.</p>
+              <StyledLink
+                variant='link'
+                href={`${chain.blockExplorers?.default.url}/address/${deployPresaleResponse.receipt.contractAddress}`}
+                target='_blank'
+              >
+                View on {chain.blockExplorers?.default.name}
+              </StyledLink>
+            </div>
+          </SuccessToastContent>
+        )
+      });
 
       toast({
         description: (
