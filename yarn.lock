@@ -4523,7 +4523,7 @@ blo@~1.0.1:
   resolved "https://registry.yarnpkg.com/blo/-/blo-1.0.1.tgz#f314a9c9df1b9508f7d71dff0df5d085ff6a35db"
   integrity sha512-e8hOrIuM72AHqISqsQARD4tEgpbTQipTz2cVScbrtiwitqo4jLmFBaSau5BXA0KN1brH3aNU/JlBtH/V/SAABg==
 
-bls-eth-wasm@^1.0.4, bls-eth-wasm@^1.1.1:
+bls-eth-wasm@^1.0.4, bls-eth-wasm@^1.1.1, bls-eth-wasm@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/bls-eth-wasm/-/bls-eth-wasm-1.2.1.tgz#85f165c17d8f16000f46695b56f72bf6af386825"
   integrity sha512-hl4oBzZQmPGNb9Wt5GI+oEuHM6twGc5HzXCzNZMVLMMg+dltsOuvuioRyLolpDFbncC0BJbGPzP1ZTysUGkksw==

@@ -39,6 +39,7 @@
     "@uniswap/v2-sdk": "~3.0.1",
     "ai": "^3.0.15",
     "blo": "~1.0.1",
+    "bls-eth-wasm": "^1.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "daisyui": "4.5.0",
