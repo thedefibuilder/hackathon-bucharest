@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { TWalletError } from '~~/lib/errors-mapper';
 import type { Abi, Address, Hex, PublicClient, TransactionReceipt, WalletClient } from 'viem';
 
+import erc20Artifact from '~~/assets/artifacts/ERC20.json';
 import { mapWalletErrorsToMessage } from '~~/lib/errors-mapper';
 import { createPublicClient, createWalletClient, custom, http } from 'viem';
 import { useChainId, useSwitchNetwork } from 'wagmi';
@@ -46,7 +47,14 @@ export default function useDeployContract() {
   }, [activeChain]);
 
   const deployContract = useCallback(
-    async (abi: Abi, bytecode: Hex, arguments_: unknown[]) => {
+    async (
+      abi: Abi,
+      bytecode: Hex,
+      arguments_: unknown[],
+      preApprove?: boolean,
+      approveToken?: Address,
+      approveAmount?: bigint
+    ) => {
       if (!publicClient || !walletClient) {
         setIsLoading(false);
         setError({
@@ -74,6 +82,25 @@ export default function useDeployContract() {
           account: walletAddress
         });
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        const contractAddress = receipt.contractAddress ?? '';
+
+        if (preApprove) {
+          const { request, result } = await publicClient.simulateContract({
+            chain: activeChain,
+            abi: erc20Artifact.abi as Abi,
+            address: approveToken as Address,
+            functionName: 'transfer',
+            args: [contractAddress, approveAmount],
+            account: walletClient.account ?? walletAddress
+          });
+
+          if (!result) {
+            throw new Error('Failed to pre-approve contract');
+          }
+
+          const txHash = await walletClient.writeContract(request);
+          await publicClient.waitForTransactionReceipt({ hash: txHash });
+        }
 
         setIsLoading(false);
         setError(null);
@@ -89,10 +116,11 @@ export default function useDeployContract() {
         console.error('ERROR DEPLOYING CONTRACT', error);
       }
     },
-    [publicClient, walletClient]
+    [publicClient, walletClient, activeChain]
   );
 
   return {
+    publicClient,
     isLoading,
     error,
     response,

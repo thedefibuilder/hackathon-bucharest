@@ -16,7 +16,7 @@ import { tokenomicsSchema, TTokenomicsSchema } from '~~/schemas/tokenomics';
 import { ESteps } from '~~/types/api';
 import { useChat } from 'ai/react';
 import { useForm } from 'react-hook-form';
-import { Abi, Hex } from 'viem';
+import { Abi, Hex, parseEther } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
 import AiTab from './_components/tabs/ai';
@@ -28,7 +28,7 @@ import TokenomicsTab from './_components/tabs/tokenomics';
 export default function Erc20Page() {
   const activeChainId = useChainId();
   const { address } = useAccount();
-
+  
   const [chatStep, setChatStep] = useState(0);
   const [activeTab, setActiveTab] = useState<TTab>(erc20Tabs.ai);
 
@@ -92,7 +92,7 @@ export default function Erc20Page() {
     }
   });
 
-  function onContinueClick(tab: TTab) {
+  function onContinueClick(tab: TERC20Tab) {
     setActiveTab(tab);
   }
 
@@ -198,12 +198,14 @@ export default function Erc20Page() {
 
   async function onErc20ContractDeploy() {
     const { tokenName, tokenSymbol, maxSupply, premintAmount } = tokenomicsForm.getValues();
+    const parsedMaxSupply = parseEther(maxSupply);
+    const premintAmountParsed = parseEther(premintAmount);
 
     await deployErc20Contract(tokenArtifact.abi as Abi, tokenArtifact.bytecode as Hex, [
       tokenName,
       tokenSymbol,
-      maxSupply,
-      premintAmount,
+      parsedMaxSupply,
+      premintAmountParsed,
       true
     ]);
   }

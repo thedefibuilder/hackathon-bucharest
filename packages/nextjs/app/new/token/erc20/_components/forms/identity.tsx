@@ -12,14 +12,14 @@ import {
 import { Input } from '~~/components/ui/input';
 import { Label } from '~~/components/ui/label';
 import { Textarea } from '~~/components/ui/textarea';
-import { erc20Tabs, TTab } from '~~/lib/tabs';
+import { erc20Tabs, TERC20Tab } from '~~/lib/tabs';
 import { TIdentitySchema } from '~~/schemas/identity';
 import Image from 'next/image';
 import { UseFormReturn } from 'react-hook-form';
 
 type TIdentityForm = {
   form: UseFormReturn<TIdentitySchema, any, undefined>;
-  onContinueClick(tab: TTab): void;
+  onContinueClick(tab: TERC20Tab): void;
   onLogoUpload(event: React.ChangeEvent<HTMLInputElement>): void;
   onCoverImageUpload(event: React.ChangeEvent<HTMLInputElement>): void;
 };

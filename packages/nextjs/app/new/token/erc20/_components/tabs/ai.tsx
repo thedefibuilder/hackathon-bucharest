@@ -29,7 +29,7 @@ export default function AiTab({
   return (
     <TabsContent
       value={erc20Tabs.ai}
-      className='h-full overflow-hidden rounded-md border border-border'
+      className='border-border h-full overflow-hidden rounded-md border'
     >
       <div className='flex h-full w-full flex-col items-center overflow-y-auto'>
         <MessagesList messages={messages} isLoading={isLoading} reload={reload} stop={stop} />

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Button } from '~~/components/ui/button';
+import { DatePickerWithRange } from '~~/components/ui/date-range-picker';
 import {
   Form,
   FormControl,
@@ -10,21 +11,28 @@ import {
   FormMessage
 } from '~~/components/ui/form';
 import { Input } from '~~/components/ui/input';
-import { erc20Tabs, TERC20Tab } from '~~/lib/tabs';
-import { TSocialsSchema } from '~~/schemas/socials';
+import { preSaleTabs, TPreSaleTab } from '~~/lib/tabs';
+import { TRequirementsSchema } from '~~/schemas/requirements';
+import { DateRange } from 'react-day-picker';
 import { UseFormReturn } from 'react-hook-form';
 
-type TSocialsForm = {
-  form: UseFormReturn<TSocialsSchema, any, undefined>;
-  onContinueClick(tab: TERC20Tab): void;
+type TRequirementsForm = {
+  form: UseFormReturn<TRequirementsSchema, any, undefined>;
+  onContinueClick(tab: TPreSaleTab): void;
+  dateRange: DateRange | undefined;
+  setDateRange: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
 };
 
-export default function SocialsForm({ form, onContinueClick }: TSocialsForm) {
+export default function RequirementsForm({
+  form,
+  onContinueClick,
+  dateRange,
+  setDateRange
+}: TRequirementsForm) {
   // eslint-disable-next-line unicorn/consistent-function-scoping
-  function onSubmit(values: TSocialsSchema) {
+  function onSubmit(values: TRequirementsSchema) {
     console.log(values);
-
-    onContinueClick(erc20Tabs.review);
+    onContinueClick(preSaleTabs.vesting);
   }
 
   return (
@@ -36,78 +44,52 @@ export default function SocialsForm({ form, onContinueClick }: TSocialsForm) {
         <div className='flex w-full flex-col space-y-8'>
           <FormField
             control={form.control}
-            name='website'
+            name='minParticipationAmount'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Website</FormLabel>
+                  <FormLabel>Min Participation Amount</FormLabel>
+                  <FormMessage className='leading-none' />
+                </div>
+                <FormControl>
+                  <Input placeholder='100' className='resize-none placeholder:italic' {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='maxParticipationAmount'
+            render={({ field }) => (
+              <FormItem>
+                <div className='flex items-center gap-x-1'>
+                  <FormLabel>Max Participation Amount</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
                   <Input
-                    placeholder='e.g. https://defibuilder.com'
-                    className='placeholder:italic'
+                    placeholder='100 000 000'
+                    className='resize-none placeholder:italic'
                     {...field}
                   />
                 </FormControl>
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name='twitter'
+            name='startTime'
             render={({ field }) => (
               <FormItem>
                 <div className='flex items-center gap-x-1'>
-                  <FormLabel>Twitter</FormLabel>
+                  <FormLabel>Pre-Sale Period</FormLabel>
                   <FormMessage className='leading-none' />
                 </div>
                 <FormControl>
-                  <Input
-                    placeholder='e.g. https://twitter.com/defibuilder'
-                    className='placeholder:italic'
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='telegram'
-            render={({ field }) => (
-              <FormItem>
-                <div className='flex items-center gap-x-1'>
-                  <FormLabel>Telegram</FormLabel>
-                  <FormMessage className='leading-none' />
-                </div>
-                <FormControl>
-                  <Input
-                    placeholder='e.g. https://t.me/defibuilder'
-                    className='placeholder:italic'
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='discord'
-            render={({ field }) => (
-              <FormItem>
-                <div className='flex items-center gap-x-1'>
-                  <FormLabel>Discord</FormLabel>
-                  <FormMessage className='leading-none' />
-                </div>
-                <FormControl>
-                  <Input
-                    placeholder='e.g. https://discord.com/invite/defibuilder'
-                    className='placeholder:italic'
-                    {...field}
+                  <DatePickerWithRange
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    form={form}
                   />
                 </FormControl>
               </FormItem>

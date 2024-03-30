@@ -6,4 +6,12 @@ export const erc20Tabs = {
   review: '5 | Review'
 } as const;
 
-export type TTab = (typeof erc20Tabs)[keyof typeof erc20Tabs];
+export const preSaleTabs = {
+  offering: '1 | Offering',
+  requirements: '2 | Requirements',
+  vesting: '3 | Vesting',
+  review: '4 | Review'
+} as const;
+
+export type TERC20Tab = (typeof erc20Tabs)[keyof typeof erc20Tabs];
+export type TPreSaleTab = (typeof preSaleTabs)[keyof typeof preSaleTabs];
