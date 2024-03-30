@@ -67,9 +67,11 @@ function ReviewSection({ title, keyValuePair }: TReviewSection) {
 
       <ul className='ml-2'>
         {Object.entries(keyValuePair).map((entry) => {
+          console.log('ENTRY', entry);
           const key = entry[0];
           const value = entry[1];
-          const isImage = value?.includes('image');
+          const isImage =
+            typeof value === 'string' ? value?.includes('data:image/jpeg;base64') : false;
 
           return (
             <li key={key} className={cn({ 'flex flex-col gap-y-1.5': isImage })}>
@@ -80,12 +82,12 @@ function ReviewSection({ title, keyValuePair }: TReviewSection) {
                 <Image
                   src={value ?? ''}
                   alt='Token Logo'
-                  width={100}
-                  height={33}
+                  width={200}
+                  height={113}
                   className='aspect-auto w-1/2 rounded-md'
                 />
               ) : (
-                <span>{value ?? ''}</span>
+                <span>{!value || value === '' ? 'N / A' : value}</span>
               )}
             </li>
           );

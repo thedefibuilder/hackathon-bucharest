@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 
 import { db } from '~~/lib/db';
 import { NextResponse } from 'next/server';
+import { formatUnits } from 'viem';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
@@ -81,8 +82,8 @@ export async function POST(request: NextRequest) {
                   create: {
                     name,
                     symbol,
-                    maxSupply: Number(maxSupply),
-                    premintAmount: Number(premintAmount),
+                    maxSupply: 0,
+                    premintAmount: 0,
                     burnable,
                     logo: logo.split(',')[1] as unknown as Buffer,
                     cover: cover.split(',')[1] as unknown as Buffer,
@@ -116,8 +117,8 @@ export async function POST(request: NextRequest) {
             create: {
               name,
               symbol,
-              maxSupply: Number(maxSupply),
-              premintAmount: Number(premintAmount),
+              maxSupply: 0,
+              premintAmount: 0,
               burnable,
               logo: logo.split(',')[1] as unknown as Buffer,
               cover: cover.split(',')[1] as unknown as Buffer,

@@ -52,8 +52,8 @@ export default function IdentityForm({
               <Image
                 src={logoBase64 ?? ''}
                 alt='Token Logo'
-                width={100}
-                height={33}
+                width={200}
+                height={113}
                 className='aspect-auto w-full rounded-md'
               />
             )}
@@ -67,8 +67,8 @@ export default function IdentityForm({
               <Image
                 src={coverImageBase64 ?? ''}
                 alt='Cover Image'
-                width={100}
-                height={33}
+                width={200}
+                height={113}
                 className='aspect-auto w-full rounded-md'
               />
             )}
