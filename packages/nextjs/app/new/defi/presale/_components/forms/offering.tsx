@@ -1,3 +1,6 @@
+/* eslint-disable unicorn/no-nested-ternary */
+'use client';
+
 import React from 'react';
 
 import { Button } from '~~/components/ui/button';
@@ -10,6 +13,13 @@ import {
   FormMessage
 } from '~~/components/ui/form';
 import { Input } from '~~/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~~/components/ui/select';
 import { preSaleTabs, TPreSaleTab } from '~~/lib/tabs';
 import { TOfferingSchema } from '~~/schemas/offering';
 import { UseFormReturn } from 'react-hook-form';
@@ -18,6 +28,8 @@ type TOfferingForm = {
   form: UseFormReturn<TOfferingSchema, any, undefined>;
   onContinueClick(tab: TPreSaleTab): void;
 };
+
+const arbitrumUsdcAddress = '0x75faf114eafb1bdbe2f0316df893fd58ce46aa4d';
 
 export default function OfferingForm({ form, onContinueClick }: TOfferingForm) {
   // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -59,17 +71,18 @@ export default function OfferingForm({ form, onContinueClick }: TOfferingForm) {
             name='payment'
             render={({ field }) => (
               <FormItem>
-                <div className='flex items-center gap-x-1'>
-                  <FormLabel>Payment Token</FormLabel>
-                  <FormMessage className='leading-none' />
-                </div>
-                <FormControl>
-                  <Input
-                    placeholder='e.g. 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
-                    className='resize-none placeholder:italic'
-                    {...field}
-                  />
-                </FormControl>
+                <FormLabel>Payment Token</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='USDC' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value={arbitrumUsdcAddress}>USDC</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
               </FormItem>
             )}
           />

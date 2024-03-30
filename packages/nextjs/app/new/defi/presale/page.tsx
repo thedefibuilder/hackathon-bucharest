@@ -1,3 +1,6 @@
+/* eslint-disable unicorn/no-nested-ternary */
+/* eslint-disable sonarjs/no-duplicate-string */
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -22,6 +25,8 @@ import PresaleReviewTab from './_components/tabs/presale-review';
 import RequirementsTab from './_components/tabs/requirements';
 import VestingTab from './_components/tabs/vesting';
 
+const arbitrumUsdcAddress = '0x75faf114eafb1bdbe2f0316df893fd58ce46aa4d';
+
 export default function PresalePage() {
   const [activeTab, setActiveTab] = useState<TPreSaleTab>(preSaleTabs.offering);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -34,7 +39,7 @@ export default function PresalePage() {
     resolver: zodResolver(offeringSchema),
     defaultValues: {
       token: '',
-      payment: '',
+      payment: arbitrumUsdcAddress,
       allocationSupply: '0',
       price: '0'
     }
